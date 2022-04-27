@@ -24,90 +24,90 @@ Thanks for checking out this project! And for further examples of what you can d
 ## GUI Creation
 ```kotlin
 fun mainGUI(): GUI {
-    return gui(
-        plugin = this,
-        title = Component.text("Example GUI", NamedTextColor.GOLD),
-        type = GUIType.CHEST,
-        rows = 1
-    ) {
-    	slot(0, 0) {
-    		item = item(Material.STONE) {
-    			name = Component.text("Cool stone!")
-            }
-        }
+  return gui(
+    plugin = this,
+    title = Component.text("Example GUI", NamedTextColor.GOLD),
+    type = GUIType.CHEST,
+      rows = 1
+  ) {
+    slot(0, 0) {
+      item = item(Material.STONE) {
+      	name = Component.text("Cool stone!")
+      }
     }
+  }
 }
 ```
 
 ## Hoppers & Dispensers Are Supported
 ```kotlin
-fun hopperGUI(): GUI {
-    return gui(
-        plugin = this,
-        title = Component.text("Hopper GUI", NamedTextColor.GOLD),
-        type = GUIType.HOPPER
-    ) {
-        // Hoppers only stay at Y=0, you shouldn't need to change it.
-    	slot(0, 0) {
-    		item = item(Material.CAKE) {
-    			name = Component.text("Cooler Cake")
-            }
-        }
+fun hopperGUI(): GUI { 
+  return gui(
+    plugin = this,
+    title = Component.text("Hopper GUI", NamedTextColor.GOLD),
+    type = GUIType.HOPPER
+  ) {
+    slot(0, 0) {
+      item = item(Material.CAKE) {
+        name = Component.text("Cooler Cake")
+      }
     }
+  }
 }
 ```
 ```kotlin
 fun dispenserGUI(): GUI {
-    return gui(
-        plugin = this,
-        title = Component.text("Dispenser GUI", NamedTextColor.GOLD),
-        type = GUIType.DISPENSER
-    ) {
-    	slot(0, 0) {
-    		item = item(Material.CAKE) {
-    			name = Component.text("Dispensed Cake")
-            }
+  return gui(
+    plugin = this,
+    title = Component.text("Dispenser GUI", NamedTextColor.GOLD),
+    type = GUIType.DISPENSER
+  ) {
+    slot(0, 0) {
+        item = item(Material.CAKE) {
+            name = Component.text("Dispensed Cake")
         }
     }
+  }
 }
 ```
 You don't need to specify the rows with these types since their rows will stay static.
 
 ## Skull Support
 ```kotlin
-fun myHeadInAGUI(): GUI {
-	return gui(
-		plugin = this,
-		title = Component.text("Dispenser GUI", NamedTextColor.GOLD),
-		type = GUIType.DISPENSER
-	) {
-		slot(1, 1) {
-			item = item(Material.PLAYER_HEAD) {
-				name = Component.text("Your Head!", NamedTextColor.RED)
-                skullOwner = player
-			}
-		}
-	}
+fun headGUI(): GUI {
+  return gui(
+    plugin = this,
+    title = Component.text("Head GUI", NamedTextColor.GOLD),
+    type = GUIType.DiSPENSER
+  ) {
+    // Middle of the dispenser.
+    slot(1, 1) {
+      item = item(Material.PLAYER_HEAD) {
+        name = Component.text("Your head!", NamedTextColor.RED)
+        skullOwner = player
+      }
+    }
+  }
 }
 ```
 We use a Player or OfflinePlayer object to assign the skull owner, this also supports Player Profiles for skulls.
 
 ## Glowing Items Support
 ```kotlin
-fun myHeadIsNowGlowingInAGUI(): GUI {
-	return gui(
-		plugin = this,
-		title = Component.text("Dispenser GUI", NamedTextColor.GOLD),
-		type = GUIType.DISPENSER
-	) {
-		slot(1, 1) {
-			item = item(Material.PLAYER_HEAD) {
-				name = Component.text("Your Glowing Head!", NamedTextColor.RED)
-                skullOwner = player
-                glowing = true
-			}
-		}
-	}
+fun glowingHeadGUI(): GUI {
+  return gui(
+    plugin = this,
+    title = Component.text("Glowing Head GUI", NamedTextColor.GOLD),
+    type = GUIType.DISPENSER
+  ) {
+    slot(1, 1) {
+      item = item(Material.PLAYER_HEAD) {
+        name = Component.text("Your glowing head!", NamedTextColor.GOLD)
+        skulOwner = player
+        glowing = true
+      }
+    }
+  }
 }
 ```
 You can make items glow in a GUI, it automatically hides the enchantments of the item if you do this as well.
@@ -115,18 +115,18 @@ You can make items glow in a GUI, it automatically hides the enchantments of the
 ## Fill The Border Of Your GUI
 ```kotlin
 fun filledBorderGUI(): GUI {
-	return gui(
-		plugin = this,
-		title = Component.text("Chest GUI", NamedTextColor.GOLD),
-		type = GUIType.CHEST,
-        rows = 3
-	) {
-        fillBorder {
-        	item = item(Material.GRAY_STAINED_GLASS_PANE) {
-        		name = Component.text("")
-            }
+    return gui(
+      plugin = this,
+      title = Component.text("Chest GUI", NamedTextColor.GOLD),
+      type = GUIType.CHEST,
+      rows = 3
+    ) {
+      fillBorder {
+        item = item(Material.GRAY_STAINED_GLASS_PANE) {
+          name = Component.text("")
         }
-	}
+      }
+    }
 }
 ```
 This'll automatically outline your GUI with whatever item you put as input.
