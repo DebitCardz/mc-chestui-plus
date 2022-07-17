@@ -1,5 +1,6 @@
 package me.tech.chestuiplus
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -14,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 fun gui(
 	plugin: JavaPlugin,
-	title: TextComponent,
+	title: Component,
 	type: GUIType,
 	render: GUI.() -> Unit
 ): GUI {
@@ -31,7 +32,7 @@ fun gui(
  */
 fun gui(
 	plugin: JavaPlugin,
-	title: TextComponent,
+	title: Component,
 	type: GUIType,
 	rows: Int,
 	render: GUI.() -> Unit

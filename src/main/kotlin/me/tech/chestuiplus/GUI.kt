@@ -6,6 +6,7 @@
  */
 package me.tech.chestuiplus
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -21,7 +22,7 @@ fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsP
 
 class GUI(
 	plugin: JavaPlugin,
-	val title: TextComponent,
+	val title: Component,
 	val type: GUIType,
 	val rows: Int,
 	private val render: GUI.() -> Unit
