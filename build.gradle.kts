@@ -1,11 +1,14 @@
 plugins {
-    java
+    kotlin("jvm") version "1.8.10"
+
     `maven-publish`
-    kotlin("jvm") version "1.6.10"
 }
 
+val githubActor = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+val githubToken = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+
 group = "me.tech"
-version = "1.0.0"
+version = "0.0.1"
 
 repositories {
     mavenCentral()
@@ -16,7 +19,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
 
-    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
 }
 
 java {
@@ -25,11 +28,22 @@ java {
 
 // Allow for publishing to Maven local.
 publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/SlaxNetwork/mc-chestui-plus")
+            credentials {
+                username = githubActor
+                password = githubToken
+            }
+        }
+    }
+
     publications {
         create<MavenPublication>(project.name.toLowerCase()) {
             groupId = "me.tech"
-            artifactId = "chestuiplus"
-            version = "1.0.0"
+            artifactId = "mc-chestui-plus"
+            version = "${project.version}"
 
             from(components["java"])
         }

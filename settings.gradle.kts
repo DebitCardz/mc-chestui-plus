@@ -1,2 +1,2 @@
-rootProject.name = "chestuiplus"
+rootProject.name = "mc-chestui-plus"
 
