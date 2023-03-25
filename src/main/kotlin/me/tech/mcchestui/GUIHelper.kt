@@ -1,4 +1,4 @@
-package me.tech.chestuiplus
+package me.tech.mcchestui
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent

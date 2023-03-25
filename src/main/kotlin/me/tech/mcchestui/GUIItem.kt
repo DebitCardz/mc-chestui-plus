@@ -4,7 +4,7 @@
  * and has been slightly recoded to better suite what I needed from it.
  * Thanks for originally creating it!
  */
-package me.tech.chestuiplus
+package me.tech.mcchestui
 
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
