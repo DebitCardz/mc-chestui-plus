@@ -31,7 +31,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/SlaxNetwork/mc-chestui-plus")
+            url = uri("https://maven.pkg.github.com/DebitCardz/mc-chestui-plus")
             credentials {
                 username = githubActor
                 password = githubToken
