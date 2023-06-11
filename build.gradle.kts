@@ -1,14 +1,14 @@
 plugins {
     kotlin("jvm") version "1.8.21"
 
-    `maven-publish`
+    id("maven-publish")
 }
 
 val githubActor = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
 val githubToken = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
 
 group = "me.tech"
-version = "0.0.2"
+version = "0.0.3"
 
 repositories {
     mavenCentral()
@@ -43,11 +43,7 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>(project.name.toLowerCase()) {
-            groupId = "me.tech"
-            artifactId = "mc-chestui-plus"
-            version = "${project.version}"
-
+        register<MavenPublication>("gpr") {
             from(components["java"])
         }
     }
