@@ -37,7 +37,7 @@ class GUIItem(
 	/**
 	 * Whether to remove default italics from the [ItemMeta].
 	 */
-	var removeDefaultItalics = false
+	var removeParentItalics = true
 
 	/**
 	 * Modify the [ItemStack] of the [GUIItem].
@@ -59,8 +59,8 @@ class GUIItem(
 	var name: Component?
 		get() = itemMeta.displayName()
 		set(value) {
-			val name = if(removeDefaultItalics) {
-				value?.decoration(TextDecoration.ITALIC, false)
+			val name = if(removeParentItalics) {
+				value?.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
 			} else {
 				value
 			}
@@ -76,8 +76,8 @@ class GUIItem(
 	var lore: Collection<Component>?
 		get() = itemMeta.lore()
 		set(value) {
-			val lore = if(removeDefaultItalics) {
-				value?.map { it.decoration(TextDecoration.ITALIC, false) }
+			val lore = if(removeParentItalics) {
+				value?.map { it.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE) }
 			} else {
 				value
 			}
