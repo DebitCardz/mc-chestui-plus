@@ -118,6 +118,15 @@ class GUI(
 
 	fun all(builder: Slot.() -> Unit) = fill(0, 0, type.slotsPerRow - 1, inventoryRows - 1, builder)
 
+	fun nextAvailableSlot(builder: Slot.() -> Unit) {
+		val firstEmptySlot = inventory.firstEmpty()
+		if(firstEmptySlot == -1) {
+			return
+		}
+
+		slot(firstEmptySlot, builder)
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	internal fun onInventoryClick(ev: InventoryClickEvent) {
 		if(ev.inventory != inventory) {
