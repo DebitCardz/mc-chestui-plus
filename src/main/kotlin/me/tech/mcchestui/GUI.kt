@@ -8,6 +8,7 @@ package me.tech.mcchestui
 
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.*
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -15,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import java.time.Duration
 
 fun toSlot(x: Int, y: Int, type: GUIType) = x + (y * type.slotsPerRow)
 fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsPerRow)
@@ -56,6 +58,11 @@ class GUI(
 	 * Requires [allowItemPlacement] to be true to work.
 	 */
 	var onDragItem: GUIDragItemEvent? = null
+
+	/**
+	 * Event called when a [Player] exits a [GUI].
+	 */
+	var onCloseInventory: GUICloseEvent? = null
 
 	var slots = arrayOfNulls<Slot>(type.slotsPerRow * rows)
 
@@ -221,7 +228,9 @@ class GUI(
 
 		ev.isCancelled = slot.cancelled
 
-		slot.onClick?.let { event -> event(ev, player) }
+		slot.onClick?.let { uiEvent ->
+			uiEvent(ev, player)
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -277,6 +286,10 @@ class GUI(
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	internal fun onInventoryClose(ev: InventoryCloseEvent) {
+		onCloseInventory?.let { uiEvent ->
+			uiEvent(ev, ev.player)
+		}
+
 		// don't unregister this.
 		if(!automaticallyUnregisterListener) {
 			return
@@ -304,3 +317,8 @@ internal typealias GUIDragItemEvent = InventoryDragEvent.(player: Player, items:
  * Event when a [GUI.Slot] is clicked.
  */
 internal typealias GUISlotClickEvent = InventoryClickEvent.(player: Player) -> Unit
+
+/**
+ * Event when a [GUI] is closed by a [Player].
+ */
+internal typealias GUICloseEvent = InventoryCloseEvent.(player: HumanEntity) -> Unit
