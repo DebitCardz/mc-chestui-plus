@@ -6,6 +6,13 @@ by, [**hazae41**](https://github.com/hazae41/).
 The primary aim of this project was to add additional features to the original project and redo a few elements to better
 suite my own personal needs from the project.
 
+## Supported Versions
+* 1.19.4
+* 1.20
+* 1.20.1
+
+*ChestUI+ will only work properly on versions 1.19.4 and above due to issues with Kyori Components.*
+
 # Changes From Original
 
 ### GUI
