@@ -17,7 +17,13 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 
-fun item(type: Material = Material.AIR, builder: GUIItem.() -> Unit = {}) =
+/**
+ * Construct a [ItemStack] to be placed in a [GUI.Slot].
+ * @param type material type.
+ * @param builder [GUIItem] builder.
+ */
+// ensure backwards compatibility.
+fun GUI.Slot.item(type: Material = Material.AIR, builder: GUIItem.() -> Unit = {}) =
 	GUIItem(type).apply(builder)
 
 class GUIItem(
@@ -43,15 +49,17 @@ class GUIItem(
 	 * Modify the [ItemStack] of the [GUIItem].
 	 * @param builder [ItemStack] builder.
 	 */
-	fun stack(builder: ItemStack.() -> Unit) =
+	fun stack(builder: ItemStack.() -> Unit) {
 		stack.apply(builder)
+	}
 
 	/**
 	 * Modify the [ItemMeta] of the [GUIItem].
 	 * @param builder [ItemMeta] builder.
 	 */
-	fun meta(builder: ItemMeta.() -> Unit) =
-		itemMeta?.apply(builder)?.also { stack.itemMeta = it }
+	fun meta(builder: ItemMeta.() -> Unit) {
+		stack.editMeta(builder)
+	}
 
 	/**
 	 * Current display name of the [ItemStack].
@@ -65,9 +73,9 @@ class GUIItem(
 				value
 			}
 
-			itemMeta.apply {
+			meta {
 				displayName(name)
-			}.also { stack.itemMeta = it }
+			}
 		}
 
 	/**
@@ -82,9 +90,9 @@ class GUIItem(
 				value
 			}
 
-			itemMeta.apply {
+			meta {
 				lore(sanitizeLore(lore))
-			}.also { stack.itemMeta = it }
+			}
 		}
 
 	/**
@@ -104,9 +112,9 @@ class GUIItem(
 	var skullOwner: OfflinePlayer?
 		get() = (itemMeta as? SkullMeta)?.owningPlayer
 		set(value) {
-			(itemMeta as? SkullMeta)
-				?.apply { owningPlayer = value }
-				?.also { stack.itemMeta = it }
+			meta {
+				(this as? SkullMeta)?.owningPlayer = value
+			}
 		}
 
 	/**
@@ -117,9 +125,9 @@ class GUIItem(
 	var playerProfile: PlayerProfile?
 		get() = (itemMeta as? SkullMeta)?.playerProfile
 		set(value) {
-			(itemMeta as? SkullMeta)
-				?.apply { playerProfile = value }
-				?.also { stack.itemMeta = it }
+			meta {
+				(this as? SkullMeta)?.playerProfile = value
+			}
 		}
 
 	/**
@@ -127,18 +135,18 @@ class GUIItem(
 	 */
 	var glowing: Boolean = false
 		set(value) {
-			// Add glow.
 			if(value) {
-				itemMeta.apply {
+				// Add glow.
+				meta {
 					addEnchant(Enchantment.ARROW_INFINITE, 0, true)
 					addItemFlags(ItemFlag.HIDE_ENCHANTS)
-				}.also { stack.itemMeta = it }
-				// Remove glow.
+				}
 			} else {
-				itemMeta.apply {
+				// Remove glow.
+				meta {
 					removeEnchant(Enchantment.ARROW_INFINITE)
 					removeItemFlags(ItemFlag.HIDE_ENCHANTS)
-				}.also { stack.itemMeta = it }
+				}
 			}
 
 			field = value
@@ -150,9 +158,9 @@ class GUIItem(
 	var customModelData: Int
 		get() = itemMeta.customModelData
 		set(value) {
-			itemMeta.apply {
+			meta {
 				setCustomModelData(value)
-			}.also { stack.itemMeta = it }
+			}
 		}
 
 	/**
