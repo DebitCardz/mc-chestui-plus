@@ -1,3 +1,7 @@
+<h3 align=center>
+  <img src="https://i.imgur.com/3Sk1buV.png"/><br><br>
+</h3>
+
 # ChestUI+
 
 ChestUI+ is a fork and slight recode of [**mc-chestui**](https://github.com/hazae41/mc-chestui), originally developed
