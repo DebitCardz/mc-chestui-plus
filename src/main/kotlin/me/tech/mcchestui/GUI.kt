@@ -7,14 +7,13 @@
 package me.tech.mcchestui
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
+import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
-import org.bukkit.event.HandlerList
-import org.bukkit.event.Listener
+import org.bukkit.event.*
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
 fun toSlot(x: Int, y: Int, type: GUIType) = x + (y * type.slotsPerRow)
@@ -27,7 +26,36 @@ class GUI(
 	val rows: Int,
 	private val render: GUI.() -> Unit
 ): Listener {
-	var allowShiftClicking = false
+	@Deprecated(
+		message =  "Use allowPlaceItem instead.",
+		replaceWith = ReplaceWith("allowItemPlacement")
+	)
+	var allowShiftClicking: Boolean = false
+
+	/**
+	 * Allow for [ItemStack] to be placed in the [GUI].
+	 */
+	var allowItemPlacement: Boolean = false
+
+	/**
+	 * Automatically unregister the [Listener] attached to the [GUI]
+	 * when all [GUI] viewers exit the menu.
+	 *
+	 * Useful to disable if a single instance of the GUI is shared.
+	 */
+	var automaticallyUnregisterListener: Boolean = true
+
+	/**
+	 * Event called when an [ItemStack] is placed into a [GUI].
+	 * Requires [allowItemPlacement] to be true to work.
+	 */
+	var onPlaceItem: GUIItemEvent? = null
+
+	/**
+	 * Event called when an item is dragged across a [GUI].
+	 * Requires [allowItemPlacement] to be true to work.
+	 */
+	var onDragItem: GUIDragItemEvent? = null
 
 	var slots = arrayOfNulls<Slot>(type.slotsPerRow * rows)
 
@@ -56,7 +84,7 @@ class GUI(
 	inner class Slot {
 		var item: GUIItem? = null
 		var cancelled: Boolean = true
-		var onClick: InventoryClickEvent.(Player) -> Unit = { }
+		var onClick: GUISlotClickEvent? = null
 	}
 
 	/**
@@ -70,6 +98,12 @@ class GUI(
 		this.render()
 	}
 
+	/**
+	 * Set the item in a specific GUI slot.
+	 *
+	 * @param i slot index
+	 * @param builder slot builder
+	 */
 	fun slot(i: Int, builder: Slot.() -> Unit) {
 		if(i > inventory.size) {
 			return
@@ -81,10 +115,27 @@ class GUI(
 		slots[i] = slot
 	}
 
+	/**
+	 * Set the item in a specific GUI slot.
+	 *
+	 * @param x x-coordinate of the slot
+	 * @param y y-coordinate of the slot
+	 * @param builder slot builder
+	 */
 	fun slot(x: Int, y: Int, builder: Slot.() -> Unit) {
 		slot(toSlot(x, y, type), builder)
 	}
 
+	/**
+	 * Fill the designated area of a GUI.
+	 * Will fill item in a rectangular shape based on points provided.
+	 *
+	 * @param x1 first x-coordinate
+	 * @param y1 first y-coordinate
+	 * @param x2 second x-coordinate
+	 * @param y2 second y-coordinate
+	 * @param builder slot builder
+	 */
 	fun fill(
 		x1: Int, y1: Int, x2: Int, y2: Int,
 		builder: Slot.() -> Unit
@@ -95,6 +146,11 @@ class GUI(
 		for (x in dx) for (y in dy) slot(x, y, builder)
 	}
 
+	/**
+	 * Completely fill the outer border of a GUI.
+	 *
+	 * @param builder slot builder
+	 */
 	fun fillBorder(builder: Slot.() -> Unit) {
 		all(builder)
 
@@ -116,8 +172,20 @@ class GUI(
 		}
 	}
 
+	/**
+	 * Fill all items of a GUI.
+	 *
+	 * @param builder slot builder.
+	 */
 	fun all(builder: Slot.() -> Unit) = fill(0, 0, type.slotsPerRow - 1, inventoryRows - 1, builder)
 
+	/**
+	 * Set the item of the next available slot not occupied by any item.
+	 * Any null item slot will be overridden as this method only checks for
+	 * slots occupied by an itemstack.
+	 *
+	 * @param builder slot builder
+	 */
 	fun nextAvailableSlot(builder: Slot.() -> Unit) {
 		val firstEmptySlot = inventory.firstEmpty()
 		if(firstEmptySlot == -1) {
@@ -133,12 +201,8 @@ class GUI(
 			return
 		}
 
-		// Prevent shift clicking items into empty space in the inventory.
-		if(
-			!allowShiftClicking
-			&& ev.isShiftClick
-			&& ev.clickedInventory != inventory
-		) {
+		// Prevent placing items into empty space in the inventory.
+		if(!allowItemPlacement && ev.isShiftClick && ev.clickedInventory != inventory) {
 			ev.isCancelled = true
 		}
 
@@ -151,24 +215,92 @@ class GUI(
 
 		// Just make sure nothing weird happens in a null slot.
 		if(slot == null) {
-			ev.isCancelled = true
+			ev.isCancelled = !allowItemPlacement
 			return
 		}
 
 		ev.isCancelled = slot.cancelled
 
-		slot.onClick(ev, player)
+		slot.onClick?.let { event -> event(ev, player) }
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	internal fun onInventoryPlaceItem(ev: InventoryClickEvent) {
+		if(ev.inventory != inventory) {
+			return
+		}
+
+		if(!allowItemPlacement || ev.clickedInventory != inventory || ev.isCancelled) {
+			return
+		}
+
+		if(slots.getOrNull(ev.slot) != null) {
+			return
+		}
+
+		val placedItem = ev.cursor
+			?: return
+
+		if(placedItem.type == Material.AIR) {
+			return
+		}
+
+		onPlaceItem?.let { uiEvent ->
+			uiEvent(ev, ev.whoClicked as Player, placedItem, ev.slot)
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	internal fun onInventoryPlaceItem(ev: InventoryDragEvent) {
+		if(ev.inventory != inventory) {
+			return
+		}
+
+		if(!allowItemPlacement || ev.view.topInventory != inventory || ev.isCancelled) {
+			return
+		}
+
+		val newItems = ev.newItems
+
+		for((index, _) in newItems) {
+			// don't override slots
+			if(slots.getOrNull(index) != null) {
+				ev.isCancelled = true
+				return
+			}
+		}
+
+		onDragItem?.let { uiEvent ->
+			uiEvent(ev, ev.whoClicked as Player, newItems)
+		}
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	internal fun onInventoryClose(ev: InventoryCloseEvent) {
-		if(
-			ev.inventory != inventory
-			|| ev.inventory.viewers.size > 1
-		) {
+		// don't unregister this.
+		if(!automaticallyUnregisterListener) {
+			return
+		}
+
+		if(ev.inventory != inventory || ev.inventory.viewers.size > 1) {
 			return
 		}
 
 		HandlerList.unregisterAll(this)
 	}
 }
+
+/**
+ * Event when an [ItemStack] interaction is preformed with a [GUI].
+ */
+internal typealias GUIItemEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> Unit
+
+/**
+ * Event when an [ItemStack] is dragged across a [GUI].
+ */
+internal typealias GUIDragItemEvent = InventoryDragEvent.(player: Player, items: Map<Int, ItemStack>) -> Unit
+
+/**
+ * Event when a [GUI.Slot] is clicked.
+ */
+internal typealias GUISlotClickEvent = InventoryClickEvent.(player: Player) -> Unit
