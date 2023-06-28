@@ -182,7 +182,7 @@ class GUI(
 	/**
 	 * Set the item of the next available slot not occupied by any item.
 	 * Any null item slot will be overridden as this method only checks for
-	 * slots occupied by an itemstack.
+	 * slots occupied by an ItemStack.
 	 *
 	 * @param builder slot builder
 	 */
