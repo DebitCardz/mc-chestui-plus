@@ -272,5 +272,5 @@ getCommand("openUi").setExecutor(object : CommandExecutor {
 ```
 
 If a single instance of a GUI is being used to be opened to multiple people or is cached it's
-extremely important to mark `automaticallyUnregisterListener ` as false or the `Listener` attached to the `GUI` 
+extremely important to mark `automaticallyUnregisterListener` as false or the `Listener` attached to the `GUI` 
 will be unregistered once all initial viewers of the `GUI` exit the menu resulting in undefined behavior. 
