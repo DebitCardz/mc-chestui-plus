@@ -16,10 +16,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import java.time.Duration
 
-fun toSlot(x: Int, y: Int, type: GUIType) = x + (y * type.slotsPerRow)
-fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsPerRow)
+fun toSlot(x: Int, y: Int, type: GUIType) = x + ((y - 1) * type.slotsPerRow) - 1
+fun fromSlot(s: Int, type: GUIType) = Pair((s + 1) % type.slotsPerRow, (s + 1) / type.slotsPerRow)
 
 class GUI(
 	plugin: JavaPlugin,
@@ -163,15 +162,15 @@ class GUI(
 
 		val x1 = 1
 		// Just makes it work with 1 row chest guis.
-		val y1 = if(type == GUIType.CHEST && rows == 1) 0 else 1
+		val y1 = if(type == GUIType.CHEST && rows == 1) 1 else 2
 
-		val x2 = type.slotsPerRow - 2
+		val x2 = type.slotsPerRow - 7
 		// Doesn't really matter if we hard code these values,
 		// what're they gonna do? Change? well besides chest guis.
 		val y2 = when(type) {
-			GUIType.CHEST -> if(rows > 2) inventoryRows - 2 else 1
+			GUIType.CHEST -> if(rows > 2) inventoryRows - 1 else 2
 			GUIType.HOPPER -> 0
-			GUIType.DISPENSER -> 1
+			GUIType.DISPENSER -> 2
 		}
 
 		fill(x1, y1, x2, y2) {
