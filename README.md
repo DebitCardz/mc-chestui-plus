@@ -162,7 +162,7 @@ fun glowingHeadGUI(): GUI {
         slot(2, 2) {
             item = item(Material.PLAYER_HEAD) {
                 name = Component.text("Your glowing head!", NamedTextColor.GOLD)
-                skulOwner = player
+                skullOwner = player
                 glowing = true
             }
         }
