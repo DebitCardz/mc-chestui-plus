@@ -24,15 +24,8 @@ class GUI(
 	plugin: JavaPlugin,
 	val title: Component,
 	val type: GUIType,
-	rows: Int,
 	private val render: GUI.() -> Unit
 ): Listener {
-	@Deprecated(
-		message =  "Use allowPlaceItem instead.",
-		replaceWith = ReplaceWith("allowItemPlacement")
-	)
-	var allowShiftClicking: Boolean = false
-
 	/**
 	 * Allow for [ItemStack] to be placed in the [GUI].
 	 */
@@ -63,27 +56,13 @@ class GUI(
 	 */
 	var onCloseInventory: GUICloseEvent? = null
 
-	val rows =
-		if(type == GUIType.CHEST) {
-			rows
-			// We can assert this won't be null since the
-			// only null value is already checked.
-		} else {
-			type.rows!!
-		}
+	val inventory = if(type is GUIType.Chest) {
+		plugin.server.createInventory(null, type.slotsPerRow * type.rows, title)
+	} else {
+		plugin.server.createInventory(null, type.inventoryType, title)
+	}
 
-	val inventory =
-		// Chest GUI.
-		if(type == GUIType.CHEST) {
-			plugin.server.createInventory(null, type.slotsPerRow * rows, title)
-			// Other GUi.
-		} else {
-			plugin.server.createInventory(null, type.inventoryType, title)
-		}
-
-
-	// prevent user from inputting row amount for anything other than chest.
-	private var slots = arrayOfNulls<Slot>(type.slotsPerRow * this.rows)
+	private var slots = arrayOfNulls<Slot>(type.slotsPerRow * type.rows)
 
 	init {
 		plugin.server.pluginManager.registerEvents(this, plugin)
@@ -101,7 +80,7 @@ class GUI(
 	 */
 	fun refresh() {
 		inventory.clear()
-		slots = arrayOfNulls(type.slotsPerRow * rows)
+		slots = arrayOfNulls(type.slotsPerRow * type.rows)
 
 		this.render()
 	}
@@ -164,15 +143,15 @@ class GUI(
 
 		val x1 = 2
 		// Just makes it work with 1 row chest guis.
-		val y1 = if(type == GUIType.CHEST && rows == 1 || type == GUIType.HOPPER) 1 else 2
+		val y1 = if(type is GUIType.Chest && type.rows == 1 || type is GUIType.Hopper) 1 else 2
 
 		val x2 = type.slotsPerRow - 1
 		// Doesn't really matter if we hard code these values,
 		// what're they gonna do? Change? well besides chest guis.
 		val y2 = when(type) {
-			GUIType.CHEST -> if(rows > 2) rows - 1 else 2
-			GUIType.HOPPER -> 1
-			GUIType.DISPENSER -> 2
+			is GUIType.Chest -> if(type.rows > 2) type.rows - 1 else 2
+			is GUIType.Hopper -> 1
+			is GUIType.Dispenser -> 2
 		}
 
 		fill(x1, y1, x2, y2) {
@@ -186,7 +165,7 @@ class GUI(
 	 * @param builder slot builder.
 	 */
 	fun all(builder: Slot.() -> Unit) {
-		fill(1, 1, type.slotsPerRow, rows, builder)
+		fill(1, 1, type.slotsPerRow, type.rows, builder)
 	}
 	/**
 	 * Set the item of the next available slot not occupied by any item.
