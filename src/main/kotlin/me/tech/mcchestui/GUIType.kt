@@ -8,12 +8,46 @@ package me.tech.mcchestui
 
 import org.bukkit.event.inventory.InventoryType
 
-enum class GUIType(
-	val inventoryType: InventoryType,
-	val slotsPerRow: Int,
-	val rows: Int?
-) {
-	CHEST(InventoryType.CHEST, 9, null),
-	DISPENSER(InventoryType.DISPENSER, 3, 3),
-	HOPPER(InventoryType.HOPPER, 5, 1);
+sealed interface GUIType {
+	 val slotsPerRow: Int
+	 val rows: Int
+	 val inventoryType: InventoryType
+
+	 data class Chest(override val rows: Int) : GUIType {
+		 override val slotsPerRow: Int
+			 get() = 9
+
+		 override val inventoryType: InventoryType
+			 get() = InventoryType.CHEST
+
+		 init {
+			 if(rows < 1 || rows > 6) {
+				 throw IllegalArgumentException(
+					 "chest rows cannot be ${if(rows < 1) "below" else "above"} $rows."
+				 )
+			 }
+		 }
+	 }
+
+	object Dispenser : GUIType {
+		override val slotsPerRow: Int
+			get() = 3
+
+		override val rows: Int
+			get() = 3
+
+		override val inventoryType: InventoryType
+			get() = InventoryType.DISPENSER
+	}
+
+	object Hopper : GUIType {
+		override val slotsPerRow: Int
+			get() = 5
+
+		override val rows: Int
+			get() = 1
+
+		override val inventoryType: InventoryType
+			get() = InventoryType.HOPPER
+	}
 }
