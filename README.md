@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.DebitCardz:mc-chestui-plus:0.0.7")
+    implementation("com.github.DebitCardz:mc-chestui-plus:0.0.8")
 }
 ```
 ### Maven
@@ -31,7 +31,7 @@ dependencies {
 <dependency>
     <groupId>com.github.DebitCardz</groupId>
     <artifactId>mc-chestui-plus</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
 </dependency>
 
 ```
@@ -83,7 +83,7 @@ fun mainGUI(): GUI {
         type = GUIType.CHEST,
         rows = 1
     ) {
-        slot(0, 0) {
+        slot(1, 1) {
             item = item(Material.STONE) {
                 name = Component.text("Cool stone!")
             }
@@ -101,7 +101,7 @@ fun hopperGUI(): GUI {
         title = Component.text("Hopper GUI", NamedTextColor.GOLD),
         type = GUIType.HOPPER
     ) {
-        slot(0, 0) {
+        slot(1, 1) {
             item = item(Material.CAKE) {
                 name = Component.text("Cooler Cake")
             }
@@ -117,7 +117,7 @@ fun dispenserGUI(): GUI {
         title = Component.text("Dispenser GUI", NamedTextColor.GOLD),
         type = GUIType.DISPENSER
     ) {
-        slot(0, 0) {
+        slot(1, 1) {
             item = item(Material.CAKE) {
                 name = Component.text("Dispensed Cake")
             }
@@ -138,7 +138,7 @@ fun headGUI(): GUI {
         type = GUIType.DiSPENSER
     ) {
         // Middle of the dispenser.
-        slot(1, 1) {
+        slot(2, 2) {
             item = item(Material.PLAYER_HEAD) {
                 name = Component.text("Your head!", NamedTextColor.RED)
                 skullOwner = player
@@ -159,7 +159,7 @@ fun glowingHeadGUI(): GUI {
         title = Component.text("Glowing Head GUI", NamedTextColor.GOLD),
         type = GUIType.DISPENSER
     ) {
-        slot(1, 1) {
+        slot(2, 2) {
             item = item(Material.PLAYER_HEAD) {
                 name = Component.text("Your glowing head!", NamedTextColor.GOLD)
                 skulOwner = player
@@ -279,7 +279,6 @@ fun singleInstanceGui(): GUI {
     ) {
         automaticallyUnregisterListener = false
         
-        // items is a Map of <Int, ItemStack>.
         slot(4, 1) {
             item = item(Material.CAKE) {
                 name = Component.text("Cake", NamedTextColor.GOLD)
