@@ -2,13 +2,39 @@
   <img src="https://i.imgur.com/3Sk1buV.png"/><br><br>
 </h3>
 
-# ChestUI+
+# ChestUI+ [![](https://jitpack.io/v/DebitCardz/mc-chestui-plus.svg)](https://jitpack.io/#DebitCardz/mc-chestui-plus)
 
 ChestUI+ is a fork and slight recode of [**mc-chestui**](https://github.com/hazae41/mc-chestui), originally developed
 by, [**hazae41**](https://github.com/hazae41/).
 
 The primary aim of this project was to add additional features to the original project and redo a few elements to better
 suite my own personal needs from the project.
+
+### Gradle
+
+```kts
+repositories {
+  maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.DebitCardz:mc-chestui-plus:0.0.7")
+}
+```
+### Maven
+```xml
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+
+<dependency>
+    <groupId>com.github.DebitCardz</groupId>
+    <artifactId>mc-chestui-plus</artifactId>
+    <version>0.0.7</version>
+</dependency>
+
+```
 
 ## Supported Versions
 * 1.19.4
