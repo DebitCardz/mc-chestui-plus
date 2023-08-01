@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.DebitCardz:mc-chestui-plus:0.0.8")
+    implementation("com.github.DebitCardz:mc-chestui-plus:1.0.0")
 }
 ```
 ### Maven
@@ -31,7 +31,7 @@ dependencies {
 <dependency>
     <groupId>com.github.DebitCardz</groupId>
     <artifactId>mc-chestui-plus</artifactId>
-    <version>0.0.8</version>
+    <version>1.0.0</version>
 </dependency>
 
 ```
@@ -80,8 +80,7 @@ fun mainGUI(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Example GUI", NamedTextColor.GOLD),
-        type = GUIType.CHEST,
-        rows = 1
+        type = GUIType.Chest(rows = 1),
     ) {
         slot(1, 1) {
             item = item(Material.STONE) {
@@ -99,7 +98,7 @@ fun hopperGUI(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Hopper GUI", NamedTextColor.GOLD),
-        type = GUIType.HOPPER
+        type = GUIType.Hopper
     ) {
         slot(1, 1) {
             item = item(Material.CAKE) {
@@ -115,7 +114,7 @@ fun dispenserGUI(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Dispenser GUI", NamedTextColor.GOLD),
-        type = GUIType.DISPENSER
+        type = GUIType.Dispenser
     ) {
         slot(1, 1) {
             item = item(Material.CAKE) {
@@ -135,7 +134,7 @@ fun headGUI(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Head GUI", NamedTextColor.GOLD),
-        type = GUIType.DiSPENSER
+        type = GUIType.Dispenser
     ) {
         // Middle of the dispenser.
         slot(2, 2) {
@@ -157,7 +156,7 @@ fun glowingHeadGUI(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Glowing Head GUI", NamedTextColor.GOLD),
-        type = GUIType.DISPENSER
+        type = GUIType.Dispenser
     ) {
         slot(2, 2) {
             item = item(Material.PLAYER_HEAD) {
@@ -179,8 +178,7 @@ fun filledBorderGUI(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Chest GUI", NamedTextColor.GOLD),
-        type = GUIType.CHEST,
-        rows = 3
+        type = GUIType.Chest(rows = 3)
     ) {
         fillBorder {
             item = item(Material.GRAY_STAINED_GLASS_PANE) {
@@ -200,8 +198,7 @@ fun nextAvailableSlotUi(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Chest GUI", NamedTextColor.GOLD),
-        type = GUIType.CHEST,
-        rows = 3
+        type = GUIType.Chest(rows = 3)
     ) {
         fillBorder {
             item = item(Material.GRAY_STAINED_GLASS_PANE) {
@@ -229,8 +226,7 @@ fun itemPlacement(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Chest GUI", NamedTextColor.GOLD),
-        type = GUIType.CHEST,
-        rows = 3
+        type = GUIType.Chest(rows = 3)
     ) {
         allowItemPlacement = true
         
@@ -250,8 +246,7 @@ fun itemDrag(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Chest GUI", NamedTextColor.GOLD),
-        type = GUIType.CHEST,
-        rows = 3
+        type = GUIType.Chest(rows = 3)
     ) {
         allowItemPlacement = true
         
@@ -274,8 +269,7 @@ fun singleInstanceGui(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Chest GUI", NamedTextColor.GOLD),
-        type = GUIType.CHEST,
-        rows = 3
+        type = GUIType.Chest(rows = 3)
     ) {
         automaticallyUnregisterListener = false
         
