@@ -68,7 +68,7 @@ class GUIItem(
 		get() = itemMeta.displayName()
 		set(value) {
 			val name = if(removeParentItalics) {
-				value?.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+				value?.let { removeComponentParentItalics(it) }
 			} else {
 				value
 			}
@@ -85,7 +85,7 @@ class GUIItem(
 		get() = itemMeta.lore()
 		set(value) {
 			val lore = if(removeParentItalics) {
-				value?.map { it.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE) }
+				value?.map { removeComponentParentItalics(it) }
 			} else {
 				value
 			}
@@ -162,6 +162,22 @@ class GUIItem(
 				setCustomModelData(value)
 			}
 		}
+
+	/**
+	 * Remove the italics of a [Component] if it is not already
+	 * set on the [Component].
+	 * @param component to remove from.
+	 * @return converted component.
+	 */
+	// we have to basically remake decorationIfAbsent because of issues with
+	// backwards compatibility.
+	private fun removeComponentParentItalics(component: Component): Component {
+		if(component.decoration(TextDecoration.ITALIC) == TextDecoration.State.NOT_SET) {
+			return component.decoration(TextDecoration.ITALIC, false)
+		}
+
+		return component
+	}
 
 	/**
 	 * Sanitize the input lore to remove trailing new line breaks.

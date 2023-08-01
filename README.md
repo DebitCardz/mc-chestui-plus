@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.DebitCardz:mc-chestui-plus:1.0.0")
+    implementation("com.github.DebitCardz:mc-chestui-plus:1.0.1")
 }
 ```
 ### Maven
@@ -31,15 +31,10 @@ dependencies {
 <dependency>
     <groupId>com.github.DebitCardz</groupId>
     <artifactId>mc-chestui-plus</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 
 ```
-
-## Supported Versions
-* 1.19.4
-* 1.20
-* 1.20.1
 
 *ChestUI+ will only work properly on versions 1.19.4 and above due to issues with Kyori Components.*
 
