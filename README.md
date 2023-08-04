@@ -36,8 +36,6 @@ dependencies {
 
 ```
 
-*ChestUI+ will only work properly on versions 1.19.4 and above due to issues with Kyori Components.*
-
 # Changes From Original
 
 ### GUI
