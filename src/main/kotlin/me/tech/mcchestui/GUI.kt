@@ -180,7 +180,7 @@ class GUI(
 			return
 		}
 
-		slot(firstEmptySlot + 1, builder)
+		slot(firstEmptySlot, builder)
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)

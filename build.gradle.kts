@@ -8,7 +8,7 @@ val githubActor = project.findProperty("gpr.user") as String? ?: System.getenv("
 val githubToken = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
 
 group = "me.tech"
-version = "1.0.2"
+version = "1.0.3"
 
 repositories {
     mavenCentral()
