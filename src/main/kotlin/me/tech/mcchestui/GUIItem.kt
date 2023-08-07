@@ -23,8 +23,25 @@ import org.bukkit.inventory.meta.SkullMeta
  * @param builder [GUIItem] builder.
  */
 // ensure backwards compatibility.
-fun GUI.Slot.item(type: Material = Material.AIR, builder: GUIItem.() -> Unit = {}) =
-	GUIItem(type).apply(builder)
+fun GUI.Slot.item(
+	type: Material = Material.AIR,
+	builder: GUIItem.() -> Unit = {}
+): GUIItem {
+	return GUIItem(type).apply(builder)
+}
+
+/**
+ * Construct a [ItemStack] to be placed in a [GUI.Slot].
+ * @param type material type.
+ * @param builder [GUIItem] builder.
+ */
+// created for prop functions.
+fun guiItem(
+	type: Material = Material.AIR,
+	builder: GUIItem.() -> Unit = {}
+): GUIItem {
+	return GUIItem(type).apply(builder)
+}
 
 class GUIItem(
 	type: Material
