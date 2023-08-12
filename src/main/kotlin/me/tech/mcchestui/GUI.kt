@@ -7,6 +7,7 @@
 package me.tech.mcchestui
 
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
@@ -21,7 +22,7 @@ fun toSlot(x: Int, y: Int, type: GUIType) = (x - 1) + ((y - 1) * type.slotsPerRo
 fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsPerRow)
 
 class GUI(
-	plugin: JavaPlugin,
+	private val plugin: JavaPlugin,
 	val title: Component,
 	val type: GUIType,
 	private val render: GUI.() -> Unit
@@ -280,7 +281,9 @@ class GUI(
 			return
 		}
 
-		HandlerList.unregisterAll(this)
+		plugin.server.scheduler.runTask(plugin, Runnable {
+			HandlerList.unregisterAll(this)
+		})
 	}
 }
 
