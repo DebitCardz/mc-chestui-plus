@@ -268,6 +268,10 @@ class GUI(
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	internal fun onInventoryClose(ev: InventoryCloseEvent) {
+		if(ev.inventory != inventory) {
+			return
+		}
+
 		onCloseInventory?.let { uiEvent ->
 			uiEvent(ev, ev.player)
 		}
@@ -277,7 +281,7 @@ class GUI(
 			return
 		}
 
-		if(ev.inventory != inventory || ev.inventory.viewers.size > 1) {
+		if(ev.inventory.viewers.size > 1) {
 			return
 		}
 
