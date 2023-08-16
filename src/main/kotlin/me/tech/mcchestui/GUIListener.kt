@@ -1,0 +1,289 @@
+package me.tech.mcchestui
+
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.event.Cancellable
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryAction
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
+import org.bukkit.inventory.Inventory
+
+internal class GUIListener(private val gui: GUI): Listener {
+    /**
+     * When a [GUI.Slot] is clicked in the [Inventory].
+     *
+     * This listener should not be used to modify the [Cancellable] of
+     * the bukkit event, handle that in the onPickup event.
+     */
+    @EventHandler
+    internal fun InventoryClickEvent.onSlotClick() {
+        // ensure clicked inventory is ui inventory.
+        if(!gui.isBukkitInventory(clickedInventory)) {
+            return
+        }
+
+        val guiSlot = gui.slots.getOrNull(slot)
+            ?: return // handle cancellation of task in onPlace.
+
+        guiSlot.onClick?.let { uiEvent ->
+            uiEvent(this, whoClicked as Player)
+        }
+    }
+
+    @EventHandler
+    internal fun InventoryClickEvent.onItemPlace() {
+        // ensure top inventory is ui inventory.
+        if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        if(
+            action == InventoryAction.MOVE_TO_OTHER_INVENTORY
+            && isShiftClick
+            && !gui.isBukkitInventory(clickedInventory) // make sure its incoming.
+        ) {
+            if(!gui.allowItemPlacement) {
+                isCancelled = true
+                return
+            }
+        } else if(
+            action in PLACE_ACTIONS
+            && gui.isBukkitInventory(clickedInventory)
+        ) {
+            if(!gui.allowItemPlacement) {
+                isCancelled = true
+                return
+            }
+        } else {
+            return
+        }
+
+        val guiSlot = gui.slots.getOrNull(slot)
+        if(guiSlot != null) {
+            if(!guiSlot.allowPickup) {
+                isCancelled = true
+                return
+            }
+        }
+
+        val itemStack = cursor
+            ?: return
+        if(itemStack.type == Material.AIR) {
+            return
+        }
+
+        gui.onPlaceItem?.let { uiEvent ->
+            uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
+                isCancelled = outcome
+            }
+        }
+    }
+
+    @EventHandler
+    internal fun InventoryDragEvent.onItemDrag() {
+        if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        if(!gui.allowItemPlacement) {
+            isCancelled = true
+            return
+        }
+
+        // single item drag handler, move to onPlaceItem event.
+        if(rawSlots.size == 1 && newItems.size == 1) {
+            val slotIndex = rawSlots.first()
+
+            val guiSlot = gui.slots.getOrNull(slotIndex)
+            if(guiSlot != null) {
+                if(!guiSlot.allowPickup) {
+                    isCancelled = true
+                    return
+                }
+            }
+
+            val itemStack = newItems.values.firstOrNull()
+                ?: return
+            if(itemStack.type == Material.AIR) {
+                return
+            }
+
+            gui.onPlaceItem?.let { uiEvent ->
+                uiEvent(this, whoClicked as Player, itemStack, slotIndex).let { outcome ->
+                    isCancelled = outcome
+                }
+            }
+
+            return
+        }
+
+        if(!gui.allowItemDrag) {
+            isCancelled = true
+            return
+        }
+
+        // ensure our drag doesn't override a slot.
+        if(newItems.any { (index, _) ->
+                val guiSlot = gui.slots.getOrNull(index)
+                    ?: return@any false
+
+                !guiSlot.allowPickup
+            }) {
+            isCancelled = true
+            return
+        }
+
+        gui.onDragItem?.let { uiEvent ->
+            uiEvent(this, whoClicked as Player, newItems).let { outcome ->
+                isCancelled = outcome
+            }
+        }
+    }
+
+    @EventHandler
+    internal fun InventoryClickEvent.onItemHotBarSwitch() {
+        if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        if(action !in HOTBAR_ACTIONS) {
+            return
+        }
+
+        if(!gui.allowHotBarSwap) {
+            isCancelled = true
+            return
+        }
+
+        // TODO: fix incoming/outgoing hotbar events
+        // this variable is constantly false, not sure why.
+        val incoming = !gui.isBukkitInventory(clickedInventory)
+
+        val itemStack = currentItem
+            ?: return
+        if(itemStack.type == Material.AIR) {
+            return
+        }
+
+        if(incoming) {
+            if(!gui.allowItemPlacement || gui.isBukkitInventory(clickedInventory)) {
+                isCancelled = true
+                return
+            }
+
+            gui.onPlaceItem?.let { uiEvent ->
+                uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
+                    isCancelled = outcome
+                }
+            }
+        } else {
+            if(!gui.allowItemPickup || !gui.isBukkitInventory(clickedInventory)) {
+                isCancelled = true
+                return
+            }
+
+            gui.onPickupItem?.let { uiEvent ->
+                uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
+                    isCancelled = outcome
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    internal fun InventoryClickEvent.onItemPickup() {
+        // ensure top inventory is ui inventory.
+        if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        // handle shift click
+        if(
+            action == InventoryAction.MOVE_TO_OTHER_INVENTORY
+            && isShiftClick
+            && gui.isBukkitInventory(clickedInventory) // make sure its outgoing.
+        ) {
+            if(!gui.allowItemPickup) {
+                isCancelled = true
+                return
+            }
+        } else if(
+            action in PICKUP_ACTIONS
+            && gui.isBukkitInventory(clickedInventory)
+        ) {
+            if(!gui.allowItemPickup) {
+                isCancelled = true
+                return
+            }
+        } else {
+            return
+        }
+
+        val guiSlot = gui.slots.getOrNull(slot)
+        if(guiSlot != null) {
+            if(!guiSlot.allowPickup) {
+                isCancelled = true
+                return
+            }
+        }
+
+        val itemStack = currentItem
+            ?: return
+        if(itemStack.type == Material.AIR) {
+            return
+        }
+
+        gui.onPickupItem?.let { uiEvent ->
+            uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
+                isCancelled = outcome
+            }
+        }
+    }
+
+    @EventHandler
+    internal fun InventoryCloseEvent.onClose() {
+        if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        gui.onCloseInventory?.let { uiEvent ->
+            uiEvent(this, player)
+        }
+
+        if(gui.singleInstance) {
+            return
+        }
+
+        if(inventory.viewers.size > 1) {
+            return
+        }
+
+        gui.unregister()
+    }
+
+    companion object {
+        private val PLACE_ACTIONS = listOf(
+            InventoryAction.PLACE_ONE,
+            InventoryAction.PLACE_SOME,
+            InventoryAction.PLACE_ALL,
+            InventoryAction.SWAP_WITH_CURSOR
+        )
+
+        private val HOTBAR_ACTIONS = listOf(
+            InventoryAction.HOTBAR_SWAP,
+            InventoryAction.HOTBAR_MOVE_AND_READD
+        )
+
+        private val PICKUP_ACTIONS = listOf(
+            InventoryAction.PICKUP_ONE,
+            InventoryAction.PICKUP_SOME,
+            InventoryAction.PICKUP_HALF,
+            InventoryAction.PICKUP_ALL,
+            InventoryAction.SWAP_WITH_CURSOR,
+            InventoryAction.COLLECT_TO_CURSOR
+        )
+    }
+}
