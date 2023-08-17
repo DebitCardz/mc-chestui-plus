@@ -29,7 +29,7 @@ sealed interface GUIType {
 		 }
 	 }
 
-	object Dispenser : GUIType {
+	 data object Dispenser : GUIType {
 		override val slotsPerRow: Int
 			get() = 3
 
@@ -40,7 +40,7 @@ sealed interface GUIType {
 			get() = InventoryType.DISPENSER
 	}
 
-	object Hopper : GUIType {
+	data object Hopper : GUIType {
 		override val slotsPerRow: Int
 			get() = 5
 
