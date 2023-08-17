@@ -25,8 +25,15 @@ class GUI(
 	 */
 	var allowItemPlacement: Boolean = false
 
+	/**
+	 * Allow for [ItemStack] to be dragged within the [GUI].
+	 */
 	var allowItemDrag: Boolean = false
 
+	/**
+	 * Allow for hotkeys to be used to place & pickup items
+	 * within the [GUI].
+	 */
 	var allowHotBarSwap: Boolean = false
 
 	/**
@@ -210,7 +217,10 @@ class GUI(
 	}
 
 	/**
+	 * Check whether a [Inventory] is a
+	 * GUI [Inventory].
 	 *
+	 * @return whether the other [Inventory] is a [GUI] inventory.
 	 */
 	fun isBukkitInventory(other: Inventory?): Boolean {
 		if(other == null) {
@@ -221,7 +231,7 @@ class GUI(
 	}
 
 	/**
-	 *
+	 * Mark a [GUI] as unregistered and remove its [Listener].
 	 */
 	fun unregister() {
 		HandlerList.unregisterAll(guiListener)
@@ -234,6 +244,9 @@ class GUI(
  */
 internal typealias GUIItemPlaceEvent = InventoryInteractEvent.(player: Player, item: ItemStack, slot: Int) -> Boolean
 
+/**
+ * Event when a [ItemStack] or [GUI.Slot] is picked up.
+ */
 internal typealias GUIItemPickupEvent = InventoryInteractEvent.(player: Player, item: ItemStack?, slot: Int) -> Boolean
 
 /**

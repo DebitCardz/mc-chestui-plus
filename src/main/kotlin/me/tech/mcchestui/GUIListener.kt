@@ -294,6 +294,9 @@ internal class GUIListener(private val gui: GUI): Listener {
     }
 
     companion object {
+        /**
+         * All actions related to placing an item.
+         */
         private val PLACE_ACTIONS = listOf(
             InventoryAction.PLACE_ONE,
             InventoryAction.PLACE_SOME,
@@ -301,11 +304,18 @@ internal class GUIListener(private val gui: GUI): Listener {
             InventoryAction.SWAP_WITH_CURSOR
         )
 
+        /**
+         * All actions related to using hotkeys to place/pickup
+         * an item.
+         */
         private val HOTBAR_ACTIONS = listOf(
             InventoryAction.HOTBAR_SWAP,
             InventoryAction.HOTBAR_MOVE_AND_READD
         )
 
+        /**
+         * All actions related to picking up an item.
+         */
         private val PICKUP_ACTIONS = listOf(
             InventoryAction.PICKUP_ONE,
             InventoryAction.PICKUP_SOME,
