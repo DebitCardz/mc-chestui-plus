@@ -210,8 +210,7 @@ class GUI(
 	}
 
 	/**
-	 * Check to see whether another bukkit inventory is our [GUI].
-	 * @return Whether the provided [Inventory] is the [GUI].
+	 *
 	 */
 	fun isBukkitInventory(other: Inventory?): Boolean {
 		if(other == null) {
@@ -222,7 +221,7 @@ class GUI(
 	}
 
 	/**
-	 * Unregister the [GUI] with its [Listener].
+	 *
 	 */
 	fun unregister() {
 		HandlerList.unregisterAll(guiListener)

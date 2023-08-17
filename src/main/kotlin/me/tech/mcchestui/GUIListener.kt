@@ -5,10 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.inventory.InventoryAction
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
+import org.bukkit.event.inventory.*
 import org.bukkit.inventory.Inventory
 
 internal class GUIListener(private val gui: GUI): Listener {
@@ -143,24 +140,74 @@ internal class GUIListener(private val gui: GUI): Listener {
         }
     }
 
-    @EventHandler
-    internal fun InventoryClickEvent.onItemHotBarSwitch() {
+    @EventHandler(ignoreCancelled = true)
+    internal fun InventoryClickEvent.onHotBarSwitchToUIInventory() {
         if(!gui.isBukkitInventory(inventory)) {
             return
         }
 
-        if(action !in HOTBAR_ACTIONS) {
+        // player inv -> gui inv
+        if(
+            action !in HOTBAR_ACTIONS
+            || click != ClickType.NUMBER_KEY
+        ) {
             return
         }
 
         if(!gui.allowHotBarSwap) {
-            isCancelled = true
+            if(gui.isBukkitInventory(clickedInventory)) {
+                isCancelled = true
+            }
+
             return
         }
 
-        // TODO: fix incoming/outgoing hotbar events
-        // this variable is constantly false, not sure why.
-        val incoming = !gui.isBukkitInventory(clickedInventory)
+        if(clickedInventory == whoClicked.inventory) {
+            return
+        }
+
+        val itemStack = if(click == ClickType.NUMBER_KEY) {
+            whoClicked.inventory.getItem(hotbarButton)
+        } else {
+            currentItem
+        } ?: return
+
+        if(itemStack.type == Material.AIR) {
+            return
+        }
+
+        gui.onPlaceItem?.let { uiEvent ->
+            uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
+                isCancelled = outcome
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    internal fun InventoryClickEvent.onHotBarSwitchToPlayerInventory() {
+        if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        // gui inv -> player inv
+        if(
+            action !in HOTBAR_ACTIONS
+            || click != ClickType.NUMBER_KEY
+        ) {
+            return
+        }
+
+        if(!gui.allowHotBarSwap) {
+            if(gui.isBukkitInventory(clickedInventory)) {
+                isCancelled = true
+            }
+
+            return
+        }
+
+        if(clickedInventory == whoClicked.inventory) {
+            return
+        }
 
         val itemStack = currentItem
             ?: return
@@ -168,27 +215,9 @@ internal class GUIListener(private val gui: GUI): Listener {
             return
         }
 
-        if(incoming) {
-            if(!gui.allowItemPlacement || gui.isBukkitInventory(clickedInventory)) {
-                isCancelled = true
-                return
-            }
-
-            gui.onPlaceItem?.let { uiEvent ->
-                uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
-                    isCancelled = outcome
-                }
-            }
-        } else {
-            if(!gui.allowItemPickup || !gui.isBukkitInventory(clickedInventory)) {
-                isCancelled = true
-                return
-            }
-
-            gui.onPickupItem?.let { uiEvent ->
-                uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
-                    isCancelled = outcome
-                }
+        gui.onPickupItem?.let { uiEvent ->
+            uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
+                isCancelled = outcome
             }
         }
     }
