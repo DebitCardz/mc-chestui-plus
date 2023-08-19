@@ -1,11 +1,15 @@
+/**
+ * @author hazae41
+ * This GUI library is used from https://github.com/hazae41/mc-chestui
+ * and has been heavily recoded to include features and
+ * utilities the original did not have, and is still being actively maintained.
+ */
+
 package me.tech.mcchestui
 
 import net.kyori.adventure.text.Component
-import org.bukkit.Material
-import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.*
-import org.bukkit.event.inventory.*
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
