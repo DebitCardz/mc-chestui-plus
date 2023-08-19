@@ -38,7 +38,7 @@ fun toSlot(x: Int, y: Int, type: GUIType): Int {
 fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsPerRow)
 
 class GUI(
-	private val plugin: JavaPlugin,
+	plugin: JavaPlugin,
 	val title: Component,
 	val type: GUIType,
 	private val render: GUI.() -> Unit
@@ -261,28 +261,3 @@ class GUI(
 		unregistered = true
 	}
 }
-
-/**
- * Event when an [ItemStack] interaction is preformed with a [GUI].
- */
-internal typealias GUIItemPlaceEvent = InventoryInteractEvent.(player: Player, item: ItemStack, slot: Int) -> Boolean
-
-/**
- * Event when a [ItemStack] or [GUI.Slot] is picked up.
- */
-internal typealias GUIItemPickupEvent = InventoryInteractEvent.(player: Player, item: ItemStack?, slot: Int) -> Boolean
-
-/**
- * Event when an [ItemStack] is dragged across a [GUI].
- */
-internal typealias GUIDragItemEvent = InventoryDragEvent.(player: Player, items: Map<Int, ItemStack>) -> Boolean
-
-/**
- * Event when a [GUI.Slot] is clicked.
- */
-internal typealias GUISlotClickEvent = InventoryInteractEvent.(player: Player) -> Unit
-
-/**
- * Event when a [GUI] is closed by a [Player].
- */
-internal typealias GUICloseEvent = InventoryCloseEvent.(player: HumanEntity) -> Unit
