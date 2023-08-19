@@ -73,7 +73,7 @@ fun mainGUI(): GUI {
     return gui(
         plugin = this,
         title = Component.text("Example GUI", NamedTextColor.GOLD),
-        type = GUIType.Chest(rows = 1),
+        type = GUIType.Chest(rows = 1)
     ) {
         slot(1, 1) {
             item = item(Material.STONE) {
