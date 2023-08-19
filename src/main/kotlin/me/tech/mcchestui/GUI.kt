@@ -26,6 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin
  * @param y must be above 0 and less than rows.
  * @param type [GUIType] for the coordinates to map to.
  * @return [Int] representing the slot index.
+ * @throws IllegalArgumentException if x or y coordinates are invalid.
  */
 fun toSlot(x: Int, y: Int, type: GUIType): Int {
 	if(x < 1 || y < 1) {
