@@ -27,7 +27,13 @@ fun gui(
  *
  * @param gui [GUI] to open.
  */
-fun HumanEntity.openGUI(gui: GUI) = openInventory(gui.inventory)
+fun HumanEntity.openGUI(gui: GUI) {
+	if(gui.unregistered) {
+		throw IllegalStateException("unable to open unregistered ui.")
+	}
+
+	openInventory(gui.bukkitInventory)
+}
 
 /**
  * Prop for a [GUI] that is placed into a

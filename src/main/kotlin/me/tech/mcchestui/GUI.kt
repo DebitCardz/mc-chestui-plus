@@ -1,9 +1,3 @@
-/**
- * @author hazae41
- * This GUI library is used from https://github.com/hazae41/mc-chestui
- * and has been slightly recoded to better suite what I needed from it.
- * Thanks for originally creating it!
- */
 package me.tech.mcchestui
 
 import net.kyori.adventure.text.Component
@@ -11,9 +5,7 @@ import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.*
-import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
+import org.bukkit.event.inventory.*
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
@@ -50,25 +42,49 @@ class GUI(
 	val title: Component,
 	val type: GUIType,
 	private val render: GUI.() -> Unit
-): Listener {
+) {
 	/**
 	 * Allow for [ItemStack] to be placed in the [GUI].
 	 */
 	var allowItemPlacement: Boolean = false
 
 	/**
-	 * Automatically unregister the [Listener] attached to the [GUI]
-	 * when all [GUI] viewers exit the menu.
-	 *
-	 * Useful to disable if a single instance of the GUI is shared.
+	 * Allow for [ItemStack] to be dragged within the [GUI].
 	 */
-	var automaticallyUnregisterListener: Boolean = true
+	var allowItemDrag: Boolean = false
+
+	/**
+	 * Allow for hotkeys to be used to place & pickup items
+	 * within the [GUI].
+	 */
+	var allowHotBarSwap: Boolean = false
+
+	/**
+	 * Allow for [ItemStack] not registered in slots to
+	 * be taken from the [GUI].]
+	 */
+	var allowItemPickup: Boolean = false
+
+	/**
+	 * Whether the [GUI] is a single instance that will be shared
+	 * between different accessors.
+	 *
+	 * Useful to enable if a single instance of the GUI is shared.
+	 */
+	var singleInstance: Boolean = false
 
 	/**
 	 * Event called when an [ItemStack] is placed into a [GUI].
 	 * Requires [allowItemPlacement] to be true to work.
 	 */
-	var onPlaceItem: GUIItemEvent? = null
+	var onPlaceItem: GUIItemPlaceEvent? = null
+
+	/**
+	 * Event called when a [ItemStack] not registered to a slot is
+	 * taken from a [GUI].
+	 * Requires [allowItemPickup] to be true to work.
+	 */
+	var onPickupItem: GUIItemPickupEvent? = null
 
 	/**
 	 * Event called when an item is dragged across a [GUI].
@@ -81,21 +97,36 @@ class GUI(
 	 */
 	var onCloseInventory: GUICloseEvent? = null
 
-	val inventory: Inventory = if(type is GUIType.Chest) {
+	/**
+	 * Bukkit [Inventory] of the [GUI].
+	 *
+	 * Do not open [GUI] from this reference as it may
+	 * lead to undefined behavior.
+	 */
+	val bukkitInventory: Inventory = if(type is GUIType.Chest) {
 		plugin.server.createInventory(null, type.slotsPerRow * type.rows, title)
 	} else {
 		plugin.server.createInventory(null, type.inventoryType, title)
 	}
 
-	private var slots = arrayOfNulls<Slot>(type.slotsPerRow * type.rows)
+	internal var slots = arrayOfNulls<Slot>(type.slotsPerRow * type.rows)
+
+	private val guiListener = GUIListener(this)
+
+	/**
+	 * Define weather the [GUI] has been unregistered.
+	 * If it has then it will be unable to be opened.
+	 */
+	internal var unregistered = false
 
 	init {
-		plugin.server.pluginManager.registerEvents(this, plugin)
+		plugin.server.pluginManager
+			.registerEvents(guiListener, plugin)
 	}
 
 	inner class Slot {
 		var item: GUIItem? = null
-		var cancelled: Boolean = true
+		var allowPickup: Boolean = false
 		var onClick: GUISlotClickEvent? = null
 	}
 
@@ -104,7 +135,7 @@ class GUI(
 	 * in the slots.
 	 */
 	fun refresh() {
-		inventory.clear()
+		bukkitInventory.clear()
 		slots = arrayOfNulls(type.slotsPerRow * type.rows)
 
 		this.render()
@@ -117,12 +148,12 @@ class GUI(
 	 * @param builder slot builder
 	 */
 	fun slot(i: Int, builder: Slot.() -> Unit) {
-		if(i > inventory.size) {
+		if(i > bukkitInventory.size) {
 			return
 		}
 
 		val slot = Slot().apply(builder)
-		inventory.setItem(i, slot.item?.stack)
+		bukkitInventory.setItem(i, slot.item?.stack)
 
 		slots[i] = slot
 	}
@@ -200,7 +231,7 @@ class GUI(
 	 * @param builder slot builder
 	 */
 	fun nextAvailableSlot(builder: Slot.() -> Unit) {
-		val firstEmptySlot = inventory.firstEmpty()
+		val firstEmptySlot = bukkitInventory.firstEmpty()
 		if(firstEmptySlot == -1) {
 			return
 		}
@@ -208,127 +239,48 @@ class GUI(
 		slot(firstEmptySlot, builder)
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	internal fun onInventoryClick(ev: InventoryClickEvent) {
-		if(ev.inventory != inventory) {
-			return
+	/**
+	 * Check whether a [Inventory] is a
+	 * GUI [Inventory].
+	 *
+	 * @return whether the other [Inventory] is a [GUI] inventory.
+	 */
+	fun isBukkitInventory(other: Inventory?): Boolean {
+		if(other == null) {
+			return false
 		}
 
-		// Prevent placing items into empty space in the inventory.
-		if(!allowItemPlacement && ev.isShiftClick && ev.clickedInventory != inventory) {
-			ev.isCancelled = true
-		}
-
-		if(ev.clickedInventory != inventory) {
-			return
-		}
-
-		val player = ev.whoClicked as Player
-		val slot = slots.getOrNull(ev.slot)
-
-		// Just make sure nothing weird happens in a null slot.
-		if(slot == null) {
-			ev.isCancelled = !allowItemPlacement
-			return
-		}
-
-		ev.isCancelled = slot.cancelled
-
-		slot.onClick?.let { uiEvent ->
-			uiEvent(ev, player)
-		}
+		return bukkitInventory == other
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
-	internal fun onInventoryPlaceItem(ev: InventoryClickEvent) {
-		if(ev.inventory != inventory) {
-			return
-		}
-
-		if(!allowItemPlacement || ev.clickedInventory != inventory || ev.isCancelled) {
-			return
-		}
-
-		if(slots.getOrNull(ev.slot) != null) {
-			return
-		}
-
-		val placedItem = ev.cursor
-			?: return
-
-		if(placedItem.type == Material.AIR) {
-			return
-		}
-
-		onPlaceItem?.let { uiEvent ->
-			uiEvent(ev, ev.whoClicked as Player, placedItem, ev.slot)
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	internal fun onInventoryPlaceItem(ev: InventoryDragEvent) {
-		if(ev.inventory != inventory) {
-			return
-		}
-
-		if(!allowItemPlacement || ev.view.topInventory != inventory || ev.isCancelled) {
-			return
-		}
-
-		val newItems = ev.newItems
-
-		for((index, _) in newItems) {
-			// don't override slots
-			if(slots.getOrNull(index) != null) {
-				ev.isCancelled = true
-				return
-			}
-		}
-
-		onDragItem?.let { uiEvent ->
-			uiEvent(ev, ev.whoClicked as Player, newItems)
-		}
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	internal fun onInventoryClose(ev: InventoryCloseEvent) {
-		if(ev.inventory != inventory) {
-			return
-		}
-
-		onCloseInventory?.let { uiEvent ->
-			uiEvent(ev, ev.player)
-		}
-
-		// don't unregister this.
-		if(!automaticallyUnregisterListener) {
-			return
-		}
-
-		if(ev.inventory.viewers.size > 1) {
-			return
-		}
-
-		plugin.server.scheduler.runTask(plugin, Runnable {
-			HandlerList.unregisterAll(this)
-		})
+	/**
+	 * Mark a [GUI] as unregistered and remove its [Listener].
+	 */
+	fun unregister() {
+		HandlerList.unregisterAll(guiListener)
+		unregistered = true
 	}
 }
 
 /**
  * Event when an [ItemStack] interaction is preformed with a [GUI].
  */
-internal typealias GUIItemEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> Unit
+internal typealias GUIItemPlaceEvent = InventoryInteractEvent.(player: Player, item: ItemStack, slot: Int) -> Boolean
+
+/**
+ * Event when a [ItemStack] or [GUI.Slot] is picked up.
+ */
+internal typealias GUIItemPickupEvent = InventoryInteractEvent.(player: Player, item: ItemStack?, slot: Int) -> Boolean
 
 /**
  * Event when an [ItemStack] is dragged across a [GUI].
  */
-internal typealias GUIDragItemEvent = InventoryDragEvent.(player: Player, items: Map<Int, ItemStack>) -> Unit
+internal typealias GUIDragItemEvent = InventoryDragEvent.(player: Player, items: Map<Int, ItemStack>) -> Boolean
 
 /**
  * Event when a [GUI.Slot] is clicked.
  */
-internal typealias GUISlotClickEvent = InventoryClickEvent.(player: Player) -> Unit
+internal typealias GUISlotClickEvent = InventoryInteractEvent.(player: Player) -> Unit
 
 /**
  * Event when a [GUI] is closed by a [Player].
