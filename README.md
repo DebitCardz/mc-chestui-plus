@@ -242,6 +242,7 @@ fun itemDrag(): GUI {
         type = GUIType.Chest(rows = 3)
     ) {
         allowItemPlacement = true
+        allowItemDrag = true
         
         // items is a Map of <Int, ItemStack>.
         onDragItem = { player, items ->
