@@ -225,6 +225,8 @@ fun itemPlacement(): GUI {
         
         onPlaceItem = { player, item, slot ->
             player.sendMessage("You have placed ${item.type.name} in slot ${slot}.")            
+        
+            false // will not cancel the event.
         }
     }
 }
@@ -249,6 +251,8 @@ fun itemDrag(): GUI {
             for((slot, itemStack) in items) {
                 player.sendMessage("You have placed ${item.type.name} in slot ${slot}.")
             }
+            
+            false // will not cancel the event.
         }
     }
 }
