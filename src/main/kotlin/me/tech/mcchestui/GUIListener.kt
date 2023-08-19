@@ -109,11 +109,19 @@ internal class GUIListener(private val gui: GUI): Listener {
             }
 
             gui.onPlaceItem?.let { uiEvent ->
-                uiEvent(this, whoClicked as Player, itemStack, slotIndex).let { outcome ->
+                // TODO: Look for better method of handling this.
+                val fakeEvent = InventoryClickEvent(
+                    view,
+                    InventoryType.SlotType.CONTAINER,
+                    slotIndex,
+                    if(type == DragType.SINGLE) ClickType.RIGHT else ClickType.LEFT,
+                    InventoryAction.PLACE_ALL
+                )
+
+                uiEvent(fakeEvent, whoClicked as Player, itemStack, slotIndex).let { outcome ->
                     isCancelled = outcome
                 }
             }
-
             return
         }
 
