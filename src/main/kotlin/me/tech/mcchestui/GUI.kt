@@ -1,7 +1,6 @@
 package me.tech.mcchestui
 
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
@@ -11,7 +10,31 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 
-fun toSlot(x: Int, y: Int, type: GUIType) = (x - 1) + ((y - 1) * type.slotsPerRow)
+/**
+ * Convert x/y coordinates to a slot index in
+ * an [Inventory].
+ *
+ * @param x must be above 0 and less than slots per row.
+ * @param y must be above 0 and less than rows.
+ * @param type [GUIType] for the coordinates to map to.
+ * @return [Int] representing the slot index.
+ * @throws IllegalArgumentException if x or y coordinates are invalid.
+ */
+fun toSlot(x: Int, y: Int, type: GUIType): Int {
+	if(x < 1 || y < 1) {
+		throw IllegalArgumentException("x or y cannot be below 1.")
+	}
+
+	if(x > type.slotsPerRow) {
+		throw IllegalArgumentException("x must be between 1 and ${type.slotsPerRow}.")
+	}
+
+	if(y > type.rows) {
+		throw IllegalArgumentException("y must be between 1 and ${type.slotsPerRow}.")
+	}
+
+	return (x - 1) + ((y - 1) * type.slotsPerRow)
+}
 fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsPerRow)
 
 class GUI(
@@ -80,7 +103,7 @@ class GUI(
 	 * Do not open [GUI] from this reference as it may
 	 * lead to undefined behavior.
 	 */
-	val bukkitInventory = if(type is GUIType.Chest) {
+	val bukkitInventory: Inventory = if(type is GUIType.Chest) {
 		plugin.server.createInventory(null, type.slotsPerRow * type.rows, title)
 	} else {
 		plugin.server.createInventory(null, type.inventoryType, title)
