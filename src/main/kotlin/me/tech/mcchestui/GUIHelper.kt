@@ -28,3 +28,10 @@ fun gui(
  * @param gui [GUI] to open.
  */
 fun HumanEntity.openGUI(gui: GUI) = openInventory(gui.inventory)
+
+/**
+ * Prop for a [GUI] that is placed into a
+ * [GUI.Slot] that usually has data passed into it
+ * through a function.
+ */
+typealias GUIProp = GUI.Slot.() -> Unit
