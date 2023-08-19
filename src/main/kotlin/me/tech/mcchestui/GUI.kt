@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 /**
  * Convert x/y coordinates to a slot index in
- * an [Inventory].2
+ * an [Inventory].
  *
  * @param x must be above 0 and less than slots per row.
  * @param y must be above 0 and less than rows.
