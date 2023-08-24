@@ -269,7 +269,7 @@ fun singleInstanceGui(): GUI {
         title = Component.text("Chest GUI", NamedTextColor.GOLD),
         type = GUIType.Chest(rows = 3)
     ) {
-        automaticallyUnregisterListener = false
+        singleInstance = false
         
         slot(4, 1) {
             item = item(Material.CAKE) {
