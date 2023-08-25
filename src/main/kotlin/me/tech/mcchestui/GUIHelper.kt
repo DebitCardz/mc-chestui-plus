@@ -42,11 +42,11 @@ fun HumanEntity.openGUI(gui: GUI) {
 }
 
 /**
- * Prop for a [GUI] that is placed into a
- * [GUI.Slot] that usually has data passed into it
- * through a function.
+ * Component placed inside of a [GUI.Slot]
+ * that practically represents a [GUI.Slot] builder.
+ * Props are usually passed from function parameters if needed.
  */
-typealias GUIProp = GUI.Slot.() -> Unit
+typealias GUIComponent = GUI.Slot.() -> Unit
 
 /**
  * Event when an [ItemStack] interaction is preformed with a [GUI].
