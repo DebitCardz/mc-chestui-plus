@@ -42,13 +42,6 @@ fun HumanEntity.openGUI(gui: GUI) {
 }
 
 /**
- * Prop for a [GUI] that is placed into a
- * [GUI.Slot] that usually has data passed into it
- * through a function.
- */
-typealias GUIProp = GUI.Slot.() -> Unit
-
-/**
  * Event when an [ItemStack] interaction is preformed with a [GUI].
  */
 internal typealias GUIItemPlaceEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> Boolean
