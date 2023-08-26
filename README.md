@@ -10,7 +10,7 @@ by, [**hazae41**](https://github.com/hazae41/).
 The primary aim of this project was to add additional features to the original project and redo a few elements to better
 suite my own personal needs from the project.
 
-### Documentation
+## Documentation
 Documentation of features of the library can be found [**here**](https://github.com/DebitCardz/mc-chestui-plus/wiki).
 
 ### Gradle
