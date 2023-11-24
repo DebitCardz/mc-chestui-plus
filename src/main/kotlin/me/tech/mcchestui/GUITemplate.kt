@@ -56,7 +56,17 @@ data class GUITemplate(
  * @param builder slot builder
  */
 fun GUI.addTemplateSlot(char: Char, builder: GUI.Slot.() -> Unit) {
-    templateItems[char] = builder
+    templateSlots[char] = guiSlot(builder)
+}
+
+/**
+ * Define chars to be used for templating.
+ *
+ * @param char template character
+ * @param slot slot
+ */
+fun GUI.addTemplateSLot(char: Char, slot: GUI.Slot) {
+    templateSlots[char] = slot
 }
 
 /**
@@ -74,10 +84,10 @@ fun GUI.template(builder: GUITemplate.() -> Unit) {
         }
 
         for((xIndex, char) in chars.withIndex()) {
-            val templateSlotBuilder = templateItems[char]
+            val slot = templateSlots[char]
                 ?: continue
 
-            slot(xIndex + 1, yIndex, templateSlotBuilder)
+            slot(xIndex + 1, yIndex, slot)
         }
     }
 }

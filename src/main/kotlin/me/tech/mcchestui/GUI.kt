@@ -41,6 +41,17 @@ fun toSlot(x: Int, y: Int, type: GUIType): Int {
 }
 fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsPerRow)
 
+/**
+ * Construct a [GUI.Slot] to be placed in a [GUI].
+ * This is primarily a utility method.
+ *
+ * @param builder [GUI.Slot] builder.
+ * @return constructed [GUI.Slot].
+ */
+fun GUI.guiSlot(builder: GUI.Slot.() -> Unit): GUI.Slot {
+	return Slot().apply(builder)
+}
+
 class GUI(
 	plugin: JavaPlugin,
 	val title: Component,
@@ -118,7 +129,7 @@ class GUI(
 	/**
 	 * Chars mapped to Slot Builders for GUI templating.
 	 */
-	internal var templateItems = mutableMapOf<Char, Slot.() -> Unit>()
+	internal var templateSlots = mutableMapOf<Char, Slot>()
 
 	private val guiListener = GUIListener(this)
 
@@ -133,6 +144,10 @@ class GUI(
 			.registerEvents(guiListener, plugin)
 	}
 
+	/**
+	 * Structure of a slot item in a [GUI].
+	 * Defines displayed [GUIItem] and click actions.
+	 */
 	inner class Slot {
 		var item: GUIItem? = null
 		var allowPickup: Boolean = false
@@ -154,17 +169,37 @@ class GUI(
 	 * Set the item in a specific GUI slot.
 	 *
 	 * @param i slot index
-	 * @param builder slot builder
+	 * @param slot slot
 	 */
-	fun slot(i: Int, builder: Slot.() -> Unit) {
+	fun slot(i: Int, slot: Slot) {
 		if(i > bukkitInventory.size) {
 			return
 		}
 
-		val slot = Slot().apply(builder)
 		bukkitInventory.setItem(i, slot.item?.stack)
 
 		slots[i] = slot
+	}
+
+	/**
+	 * Set the item in a specific GUI slot.
+	 *
+	 * @param i slot index
+	 * @param builder slot builder
+	 */
+	fun slot(i: Int, builder: Slot.() -> Unit) {
+		slot(i, Slot().apply(builder))
+	}
+
+	/**
+	 * Set the item in a specific GUI slot.
+	 *
+	 * @param x x-coordinate of the slot
+	 * @param y y-coordinate of the slot
+	 * @param slot slot
+	 */
+	fun slot(x: Int, y: Int, slot: Slot) {
+		slot(toSlot(x, y, type), slot)
 	}
 
 	/**
