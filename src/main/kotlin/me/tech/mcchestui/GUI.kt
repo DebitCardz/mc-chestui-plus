@@ -76,7 +76,7 @@ class GUI(
 
 	/**
 	 * Allow for [ItemStack] not registered in slots to
-	 * be taken from the [GUI].]
+	 * be taken from the [GUI].
 	 */
 	var allowItemPickup: Boolean = false
 
