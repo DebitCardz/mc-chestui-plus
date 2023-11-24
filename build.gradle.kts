@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.20"
 
     id("maven-publish")
 }
@@ -8,7 +8,7 @@ val githubActor = project.findProperty("gpr.user") as String? ?: System.getenv("
 val githubToken = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
 
 group = "me.tech"
-version = "1.1.0"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -23,8 +23,6 @@ dependencies {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-
     withJavadocJar()
     withSourcesJar()
 }
@@ -44,6 +42,7 @@ publishing {
 
     publications {
         register<MavenPublication>("gpr") {
+            artifactId = "mc-chestui-plus"
             from(components["java"])
         }
     }

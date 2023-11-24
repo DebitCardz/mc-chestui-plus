@@ -115,6 +115,11 @@ class GUI(
 
 	internal var slots = arrayOfNulls<Slot>(type.slotsPerRow * type.rows)
 
+	/**
+	 * Chars mapped to Slot Builders for GUI templating.
+	 */
+	internal var templateItems = mutableMapOf<Char, Slot.() -> Unit>()
+
 	private val guiListener = GUIListener(this)
 
 	/**
