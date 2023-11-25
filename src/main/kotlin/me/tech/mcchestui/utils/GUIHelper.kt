@@ -1,5 +1,7 @@
-package me.tech.mcchestui
+package me.tech.mcchestui.utils
 
+import me.tech.mcchestui.GUI
+import me.tech.mcchestui.GUIType
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
@@ -15,7 +17,6 @@ import org.bukkit.plugin.java.JavaPlugin
  * @param plugin
  * @param title Title of the GUI
  * @param type Type of GUI to generate
- * @param rows Amount of rows in the Chest GUI
  * @return [GUI] Object
  */
 fun gui(

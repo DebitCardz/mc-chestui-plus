@@ -1,4 +1,7 @@
-package me.tech.mcchestui
+package me.tech.mcchestui.template
+
+import me.tech.mcchestui.GUI
+import me.tech.mcchestui.guiSlot
 
 /**
  * Representing the structure of the GUI Template.
@@ -10,30 +13,36 @@ data class GUITemplate(
     var fourthRow: String? = null,
     var fifthRow: String? = null,
     var sixthRow: String? = null,
+
     var rows: String? = null
 ) {
-    private val usingRows get() = rows != null
-
     /**
+     * Converts [GUITemplate] into a [Map].
+     *
+     * Will automatically override [rows] with each select row
+     * so both options work with each other, select rows will take priority over
+     * [rows] so it can override it.
+     *
      * @return list of characters mapped to the row.
      */
     internal fun toMap(): Map<Int, List<Char>> {
-        if(usingRows) {
-            return rows
-                ?.split("\n")
-                ?.withIndex()
-                ?.associate { it.index + 1 to toCharList(it.value) }
-                ?: emptyMap()
-        } else {
-            return mapOf(
-                1 to toCharList(firstRow),
-                2 to toCharList(secondRow),
-                3 to toCharList(thirdRow),
-                4 to toCharList(fourthRow),
-                5 to toCharList(fifthRow),
-                6 to toCharList(sixthRow)
-            )
-        }
+        return rowsMap()
+            .toMutableMap()
+            .apply { putAll(selectRowsMap().filterValues { it.isNotEmpty() }) }
+    }
+
+    private fun rowsMap(): Map<Int, List<Char>> {
+        return rows
+            ?.split("\n")
+            ?.withIndex()
+            ?.associate { it.index + 1 to toCharList(it.value) }
+            ?: emptyMap()
+    }
+
+    private fun selectRowsMap(): Map<Int, List<Char>> {
+        return listOf(firstRow, secondRow, thirdRow, fourthRow, fifthRow, sixthRow)
+            .withIndex()
+            .associate { it.index + 1 to toCharList(it.value) }
     }
 
     /**
