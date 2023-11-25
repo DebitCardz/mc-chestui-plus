@@ -36,6 +36,6 @@ out/
 .vscode/
 
 ### Other ###
-development/run
-!development/run/eula.txt
-!development/run/server.properties
+development/run/
+!/development/run/eula.txt
+!/development/run/server.properties

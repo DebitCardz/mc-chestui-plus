@@ -17,7 +17,7 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
 }
 

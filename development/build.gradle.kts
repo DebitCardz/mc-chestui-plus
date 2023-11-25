@@ -9,27 +9,22 @@ plugins {
 }
 
 group = "me.tech"
-version = "1.0.0"
+version = rootProject.version
 
 repositories {
     mavenCentral()
+    mavenLocal()
 
     maven("https://papermc.io/repo/repository/maven-public/")
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
-
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
     implementation(rootProject)
 }
 
 tasks.withType<RunServer> {
     minecraftVersion("1.20.2")
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 bukkit {
