@@ -32,7 +32,7 @@ bukkit {
     apiVersion = "1.20"
     version = "${project.version}"
     authors = listOf("Tech")
-    main = "me.tech.development.DevelopmentPlugin"
+    main = "DevelopmentPlugin"
 
     commands {
         register("openui")
