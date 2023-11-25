@@ -34,3 +34,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Other ###
+development/run
+!development/run/eula.txt
+!development/run/server.properties
