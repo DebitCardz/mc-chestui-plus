@@ -65,7 +65,7 @@ fun GUI.addTemplateSlot(char: Char, builder: GUI.Slot.() -> Unit) {
  * @param char template character
  * @param slot slot
  */
-fun GUI.addTemplateSLot(char: Char, slot: GUI.Slot) {
+fun GUI.addTemplateSlot(char: Char, slot: GUI.Slot) {
     templateSlots[char] = slot
 }
 
