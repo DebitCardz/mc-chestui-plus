@@ -1,5 +1,6 @@
-package me.tech.mcchestui
+package me.tech.mcchestui.listeners
 
+import me.tech.mcchestui.GUI
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
