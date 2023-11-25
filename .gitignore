@@ -38,3 +38,4 @@ out/
 ### Other ###
 development/run/
 development/src/main/kotlin/
+!development/src/main/kotlin/.gitkeep
