@@ -1,27 +1,24 @@
-package me.tech.mcchestui
+package me.tech.mcchestui.item
 
-import com.destroystokyo.paper.profile.PlayerProfile
+import me.tech.mcchestui.GUI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
-import org.bukkit.OfflinePlayer
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
-import org.bukkit.inventory.meta.SkullMeta
 
 /**
  * Construct a [ItemStack] to be placed in a [GUI.Slot].
  * @param type material type.
  * @param builder [GUIItem] builder.
  */
-// ensure backwards compatibility.
 fun GUI.Slot.item(
 	type: Material = Material.AIR,
 	builder: GUIItem.() -> Unit = {}
 ): GUIItem {
-	return GUIItem(type).apply(builder)
+	return guiItem(type, builder)
 }
 
 /**
@@ -29,7 +26,6 @@ fun GUI.Slot.item(
  * @param type material type.
  * @param builder [GUIItem] builder.
  */
-// created for prop functions.
 fun guiItem(
 	type: Material = Material.AIR,
 	builder: GUIItem.() -> Unit = {}
@@ -37,7 +33,7 @@ fun guiItem(
 	return GUIItem(type).apply(builder)
 }
 
-class GUIItem(
+open class GUIItem(
 	type: Material
 ) {
 	/**
@@ -48,7 +44,7 @@ class GUIItem(
 	/**
 	 * [ItemMeta] of the [GUIItem].
 	 */
-	val itemMeta
+	open val itemMeta: ItemMeta
 		get() = stack.itemMeta
 
 	/**
@@ -65,14 +61,6 @@ class GUIItem(
 	}
 
 	/**
-	 * Modify the [ItemMeta] of the [GUIItem].
-	 * @param builder [ItemMeta] builder.
-	 */
-	fun meta(builder: ItemMeta.() -> Unit) {
-		stack.editMeta(builder)
-	}
-
-	/**
 	 * Current display name of the [ItemStack].
 	 */
 	var name: Component?
@@ -84,8 +72,8 @@ class GUIItem(
 				value
 			}
 
-			meta {
-				displayName(name)
+			stack.editMeta {
+				it.displayName(name)
 			}
 		}
 
@@ -101,8 +89,8 @@ class GUIItem(
 				value
 			}
 
-			meta {
-				lore(sanitizeLore(lore))
+			stack.editMeta {
+				it.lore(sanitizeLore(lore))
 			}
 		}
 
@@ -116,47 +104,17 @@ class GUIItem(
 		}
 
 	/**
-	 * Current [OfflinePlayer] that owns the player head.
-	 *
-	 * @warning Will only apply on items that inherit [SkullMeta].
-	 */
-	var skullOwner: OfflinePlayer?
-		get() = (itemMeta as? SkullMeta)?.owningPlayer
-		set(value) {
-			meta {
-				(this as? SkullMeta)?.owningPlayer = value
-			}
-		}
-
-	/**
-	 * Current [PlayerProfile] that owns the player head.
-	 *
-	 * @warning Will only apply on items that inherit [SkullMeta].
-	 */
-	var playerProfile: PlayerProfile?
-		get() = (itemMeta as? SkullMeta)?.playerProfile
-		set(value) {
-			meta {
-				(this as? SkullMeta)?.playerProfile = value
-			}
-		}
-
-	/**
 	 * Whether the [ItemStack] is glowing.
 	 */
 	var glowing: Boolean = false
 		set(value) {
-			if(value) {
-				// Add glow.
-				meta {
-					addEnchant(Enchantment.ARROW_INFINITE, 0, true)
-					addItemFlags(ItemFlag.HIDE_ENCHANTS)
-				}
-			} else {
-				// Remove glow.
-				meta {
-					removeEnchant(Enchantment.ARROW_INFINITE)
-					removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+			stack.editMeta {
+				if(value) {
+					it.addEnchant(Enchantment.ARROW_INFINITE, 0, true)
+					it.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+				} else {
+					it.removeEnchant(Enchantment.ARROW_INFINITE)
+					it.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
 				}
 			}
 
@@ -169,8 +127,8 @@ class GUIItem(
 	var customModelData: Int
 		get() = itemMeta.customModelData
 		set(value) {
-			meta {
-				setCustomModelData(value)
+			stack.editMeta {
+				it.setCustomModelData(value)
 			}
 		}
 
