@@ -8,7 +8,9 @@
 package me.tech.mcchestui
 
 import me.tech.mcchestui.item.GUIItem
-import me.tech.mcchestui.listeners.GUIListener
+import me.tech.mcchestui.listeners.*
+import me.tech.mcchestui.listeners.item.*
+import me.tech.mcchestui.listeners.hotbar.*
 import me.tech.mcchestui.utils.GUICloseEvent
 import me.tech.mcchestui.utils.GUIDragItemEvent
 import me.tech.mcchestui.utils.GUIItemPickupEvent
@@ -138,7 +140,17 @@ class GUI(
 	 */
 	internal var templateSlots = mutableMapOf<Char, Slot>()
 
-	private val guiListener = GUIListener(this)
+	private val eventListeners = listOf(
+		GUISlotClickListener(this),
+
+		GUIItemPickupListener(this),
+		GUIItemPlaceListener(this),
+		GUIItemDragListener(this),
+
+		GUIHotbarListener(this),
+
+		GUICloseListener(this)
+	)
 
 	/**
 	 * Define weather the [GUI] has been unregistered.
@@ -147,8 +159,10 @@ class GUI(
 	internal var unregistered = false
 
 	init {
-		plugin.server.pluginManager
-			.registerEvents(guiListener, plugin)
+		eventListeners.forEach {
+			plugin.server.pluginManager
+				.registerEvents(it, plugin)
+		}
 	}
 
 	/**
@@ -308,7 +322,7 @@ class GUI(
 	 * Mark a [GUI] as unregistered and remove its [Listener].
 	 */
 	fun unregister() {
-		HandlerList.unregisterAll(guiListener)
+		eventListeners.forEach(HandlerList::unregisterAll)
 		unregistered = true
 	}
 }
