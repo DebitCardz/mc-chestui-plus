@@ -7,6 +7,7 @@
 
 package me.tech.mcchestui
 
+import me.tech.mcchestui.item.GUIItem
 import me.tech.mcchestui.listeners.GUIListener
 import me.tech.mcchestui.utils.GUICloseEvent
 import me.tech.mcchestui.utils.GUIDragItemEvent
