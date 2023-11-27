@@ -16,7 +16,6 @@ internal class GUICloseListener(gui: GUI) : GUIEventListener(gui) {
         if(gui.hasAttachedGui) {
             player.inventory.storageContents = emptyArray()
 
-            // TODO: remove listeners from child to reduce load.
             gui.attachedGui?.unregister()
 
             restoreCachedInventory(player as Player, gui)
