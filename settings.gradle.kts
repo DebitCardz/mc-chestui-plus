@@ -1,4 +1,7 @@
 rootProject.name = "mc-chestui-plus"
-include("development")
+
+if(System.getenv("JITPACK") != null) {
+    include("development")
+}
 
 startParameter.excludedTaskNames += ":development:build"
