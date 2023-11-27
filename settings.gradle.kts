@@ -4,10 +4,10 @@ plugins {
 
 rootProject.name = "mc-chestui-plus"
 
-if(System.getenv("JITPACK") != null) {
-    include("development")
+include("development")
 
-    startParameter.excludedTaskNames += ":development:build"
-    startParameter.excludedTaskNames += ":development:compileJava"
-    startParameter.excludedTaskNames += ":development:compileKotlin"
+if(System.getenv("JITPACK") != null) {
+    listOf("build", "compileJava", "compileKotlin").forEach {
+        startParameter.excludedTaskNames += ":development:$it"
+    }
 }
