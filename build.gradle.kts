@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.20"
 
-    id("maven-publish")
+    `maven-publish`
 }
 
 val githubActor = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")

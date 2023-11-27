@@ -1,0 +1,5 @@
+jdk:
+  - openjdk9
+before_install:
+  - sdk install java 18.0.1.1-open
+  - sdk use java 18.0.1.1-open
