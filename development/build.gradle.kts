@@ -23,6 +23,10 @@ dependencies {
     implementation(rootProject)
 }
 
+tasks.jar {
+    enabled = false
+}
+
 tasks.withType<RunServer> {
     minecraftVersion("1.20.2")
 }
