@@ -41,7 +41,6 @@ publishing {
 
     publications {
         register<MavenPublication>("gpr") {
-            artifactId = "mc-chestui-plus"
             from(components["java"])
         }
     }
