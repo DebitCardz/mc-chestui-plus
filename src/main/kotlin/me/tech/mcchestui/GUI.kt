@@ -7,17 +7,12 @@
 
 package me.tech.mcchestui
 
-import me.tech.mcchestui.item.GUIItem
+import me.tech.mcchestui.attached.*
+import me.tech.mcchestui.item.*
 import me.tech.mcchestui.listeners.*
-import me.tech.mcchestui.listeners.hotbar.GUIHotbarListener
-import me.tech.mcchestui.listeners.item.GUIItemDragListener
-import me.tech.mcchestui.listeners.item.GUIItemPickupListener
-import me.tech.mcchestui.listeners.item.GUIItemPlaceListener
-import me.tech.mcchestui.utils.GUICloseEvent
-import me.tech.mcchestui.utils.GUIDragItemEvent
-import me.tech.mcchestui.utils.GUIItemPickupEvent
-import me.tech.mcchestui.utils.GUIItemPlaceEvent
-import me.tech.mcchestui.utils.GUISlotClickEvent
+import me.tech.mcchestui.listeners.hotbar.*
+import me.tech.mcchestui.listeners.item.*
+import me.tech.mcchestui.utils.*
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Player
 import org.bukkit.event.*
