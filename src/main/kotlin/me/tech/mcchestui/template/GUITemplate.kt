@@ -6,15 +6,8 @@ import me.tech.mcchestui.guiSlot
 /**
  * Representing the structure of the GUI Template.
  */
-data class GUITemplate(
-    var firstRow: String? = null,
-    var secondRow: String? = null,
-    var thirdRow: String? = null,
-    var fourthRow: String? = null,
-    var fifthRow: String? = null,
-    var sixthRow: String? = null,
-
-    var rows: String? = null
+class GUITemplate(
+    private val rows: Array<out String>
 ) {
     /**
      * Converts [GUITemplate] into a [Map].
@@ -26,21 +19,23 @@ data class GUITemplate(
      * @return list of characters mapped to the row.
      */
     internal fun toMap(): Map<Int, List<Char>> {
-        return rowsMap()
-            .toMutableMap()
-            .apply { putAll(selectRowsMap().filterValues { it.isNotEmpty() }) }
-    }
+        if(rows.isEmpty()) {
+            return emptyMap()
+        }
 
-    private fun rowsMap(): Map<Int, List<Char>> {
+        if(rows.size == 1) {
+            val row = rows.first()
+            if(row.contains("\n")) {
+                return row
+                    .split("\n")
+                    .withIndex()
+                    .associate { it.index + 1 to toCharList(it.value) }
+            }
+
+            return mapOf(1 to toCharList(row))
+        }
+
         return rows
-            ?.split("\n")
-            ?.withIndex()
-            ?.associate { it.index + 1 to toCharList(it.value) }
-            ?: emptyMap()
-    }
-
-    private fun selectRowsMap(): Map<Int, List<Char>> {
-        return listOf(firstRow, secondRow, thirdRow, fourthRow, fifthRow, sixthRow)
             .withIndex()
             .associate { it.index + 1 to toCharList(it.value) }
     }
@@ -81,10 +76,10 @@ fun GUI.addTemplateSlot(char: Char, slot: GUI.Slot) {
 /**
  * Structure the template of the [GUI].
  *
- * @param builder template builder
+ * @param template [GUI] string template.
  */
-fun GUI.template(builder: GUITemplate.() -> Unit) {
-    val map = GUITemplate().apply(builder)
+fun GUI.template(vararg template: String) {
+    val map = GUITemplate(template)
         .toMap()
 
     for((yIndex, chars) in map) {

@@ -25,7 +25,7 @@ fun gui(
 	type: GUIType,
 	render: GUI.() -> Unit
 ): GUI {
-	return GUI(plugin, title, type, render).apply(render)
+	return GUI(plugin, title, type, type.createBukkitInventory(title), false, render).apply(render)
 }
 
 /**
@@ -40,6 +40,11 @@ fun HumanEntity.openGUI(gui: GUI) {
 
 	openInventory(gui.bukkitInventory)
 }
+
+/**
+ * Anonymous function to construct new [GUI].
+ */
+typealias GUIBuilder = GUI.() -> Unit
 
 /**
  * Event when an [ItemStack] interaction is preformed with a [GUI].
