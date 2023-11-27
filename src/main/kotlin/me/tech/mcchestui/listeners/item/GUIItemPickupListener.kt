@@ -16,6 +16,11 @@ internal class GUIItemPickupListener(gui: GUI): GUIEventListener(gui) {
             return
         }
 
+        if(gui.hasAttachedGui) {
+            isCancelled = true
+            return
+        }
+
         // handle shift click
         if(
             action == InventoryAction.MOVE_TO_OTHER_INVENTORY

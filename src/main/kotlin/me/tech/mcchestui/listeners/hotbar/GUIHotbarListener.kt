@@ -2,6 +2,7 @@ package me.tech.mcchestui.listeners.hotbar
 
 import me.tech.mcchestui.GUI
 import me.tech.mcchestui.listeners.GUIEventListener
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -11,7 +12,13 @@ import org.bukkit.event.inventory.InventoryClickEvent
 internal class GUIHotbarListener(gui: GUI) : GUIEventListener(gui) {
     @EventHandler(ignoreCancelled = true)
     internal fun InventoryClickEvent.hotBarSwitchToUIInventory() {
+        // we dont need hotbar swaps between two guis.
         if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        if(gui.hasAttachedGui) {
+            isCancelled = true
             return
         }
 
@@ -54,7 +61,13 @@ internal class GUIHotbarListener(gui: GUI) : GUIEventListener(gui) {
 
     @EventHandler(ignoreCancelled = true)
     internal fun InventoryClickEvent.hotBarSwitchToPlayerInventory() {
+        // we dont need hotbar swaps between two guis.
         if(!gui.isBukkitInventory(inventory)) {
+            return
+        }
+
+        if(gui.hasAttachedGui) {
+            isCancelled = true
             return
         }
 

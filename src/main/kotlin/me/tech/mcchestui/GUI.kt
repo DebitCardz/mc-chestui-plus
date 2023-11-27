@@ -9,8 +9,10 @@ package me.tech.mcchestui
 
 import me.tech.mcchestui.item.GUIItem
 import me.tech.mcchestui.listeners.*
-import me.tech.mcchestui.listeners.item.*
-import me.tech.mcchestui.listeners.hotbar.*
+import me.tech.mcchestui.listeners.hotbar.GUIHotbarListener
+import me.tech.mcchestui.listeners.item.GUIItemDragListener
+import me.tech.mcchestui.listeners.item.GUIItemPickupListener
+import me.tech.mcchestui.listeners.item.GUIItemPlaceListener
 import me.tech.mcchestui.utils.GUICloseEvent
 import me.tech.mcchestui.utils.GUIDragItemEvent
 import me.tech.mcchestui.utils.GUIItemPickupEvent
@@ -21,6 +23,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.*
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.PlayerInventory
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -31,24 +34,10 @@ import org.bukkit.plugin.java.JavaPlugin
  * @param y must be above 0 and less than rows.
  * @param type [GUIType] for the coordinates to map to.
  * @return [Int] representing the slot index.
- * @throws IllegalArgumentException if x or y coordinates are invalid.
  */
 fun toSlot(x: Int, y: Int, type: GUIType): Int {
-	if(x < 1 || y < 1) {
-		throw IllegalArgumentException("x or y cannot be below 1.")
-	}
-
-	if(x > type.slotsPerRow) {
-		throw IllegalArgumentException("x must be between 1 and ${type.slotsPerRow}.")
-	}
-
-	if(y > type.rows) {
-		throw IllegalArgumentException("y must be between 1 and ${type.slotsPerRow}.")
-	}
-
 	return (x - 1) + ((y - 1) * type.slotsPerRow)
 }
-fun fromSlot(s: Int, type: GUIType) = Pair(s % type.slotsPerRow, s / type.slotsPerRow)
 
 /**
  * Construct a [GUI.Slot] to be placed in a [GUI].
@@ -62,11 +51,22 @@ fun GUI.guiSlot(builder: GUI.Slot.() -> Unit): GUI.Slot {
 }
 
 class GUI(
-	plugin: JavaPlugin,
+	internal val plugin: JavaPlugin,
 	val title: Component,
 	val type: GUIType,
-	private val render: GUI.() -> Unit
+	/**
+	 * Bukkit [Inventory] of the [GUI].
+	 *
+	 * Do not open [GUI] from this reference as it may
+	 * lead to undefined behavior.
+	 */
+	val bukkitInventory: Inventory,
+	attached: Boolean,
+	private val render: GUI.() -> Unit = { }
 ) {
+	constructor(plugin: JavaPlugin, inventory: PlayerInventory)
+		: this(plugin, Component.empty(), GUIType.Chest(rows = 4), inventory, true)
+
 	/**
 	 * Allow for [ItemStack] to be placed in the [GUI].
 	 */
@@ -127,12 +127,10 @@ class GUI(
 	 * Do not open [GUI] from this reference as it may
 	 * lead to undefined behavior.
 	 */
-	val bukkitInventory: Inventory = if(type is GUIType.Chest) {
-		plugin.server.createInventory(null, type.slotsPerRow * type.rows, title)
-	} else {
-		plugin.server.createInventory(null, type.inventoryType, title)
-	}
 
+	/**
+	 * Slots used by the [GUI].
+	 */
 	internal var slots = arrayOfNulls<Slot>(type.slotsPerRow * type.rows)
 
 	/**
@@ -140,17 +138,39 @@ class GUI(
 	 */
 	internal var templateSlots = mutableMapOf<Char, Slot>()
 
-	private val eventListeners = listOf(
-		GUISlotClickListener(this),
+	/**
+	 * [PlayerInventory] attached to the [GUI] that acts
+	 * like a [GUI].
+	 */
+	internal var attachedGui: GUI? = null
 
-		GUIItemPickupListener(this),
-		GUIItemPlaceListener(this),
-		GUIItemDragListener(this),
+	/**
+	 * @return Whether another [GUI] has been attached to this one.
+	 */
+	val hasAttachedGui: Boolean
+		get() = attachedGui != null
 
-		GUIHotbarListener(this),
+	/**
+	 * [PlayerInventory] cache for when an [attachedGui] is present.
+	 * Will by default use the [MemoryAttachedInventoryCache] which will lose data
+	 * if the server closes while a player is actively using the [attachedGui].
+	 */
+	internal var attachedInventoryCache: AttachedInventoryCache = MemoryAttachedInventoryCache
 
-		GUICloseListener(this)
-	)
+	private val eventListeners = if(!attached) {
+		listOf(
+			GUISlotClickListener(this),
+			GUICloseListener(this),
+			GUIItemPlaceListener(this),
+			GUIItemPickupListener(this),
+			GUIItemDragListener(this),
+			GUIHotbarListener(this)
+		)
+	} else {
+		listOf(
+			GUISlotClickListener(this)
+		)
+	}
 
 	/**
 	 * Define weather the [GUI] has been unregistered.
@@ -159,10 +179,7 @@ class GUI(
 	internal var unregistered = false
 
 	init {
-		eventListeners.forEach {
-			plugin.server.pluginManager
-				.registerEvents(it, plugin)
-		}
+	    registerListeners(plugin)
 	}
 
 	/**
@@ -193,7 +210,21 @@ class GUI(
 	 * @param slot slot
 	 */
 	fun slot(i: Int, slot: Slot) {
-		if(i > bukkitInventory.size) {
+		if(i >= bukkitInventory.size) {
+			// run slot in attached ui instead.
+			if(hasAttachedGui) {
+				var attachedUiIndex = i - (type.slotsPerRow * type.rows)
+				attachedUiIndex = when {
+					(attachedUiIndex + 9) >= 36 -> attachedUiIndex - 27
+					else -> attachedUiIndex + 9
+				}
+
+				attachedGui?.slot(
+					attachedUiIndex,
+					slot
+				)
+			}
+
 			return
 		}
 
@@ -316,6 +347,16 @@ class GUI(
 		}
 
 		return bukkitInventory == other
+	}
+
+	/**
+	 * Register all [Listener] associated with the [GUI].
+	 */
+	private fun registerListeners(plugin: JavaPlugin) {
+		eventListeners.forEach {
+			plugin.server.pluginManager
+				.registerEvents(it, plugin)
+		}
 	}
 
 	/**

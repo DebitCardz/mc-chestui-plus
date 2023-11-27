@@ -14,7 +14,7 @@ internal class GUIItemDragListener(gui: GUI) : GUIEventListener(gui) {
             return
         }
 
-        if(!gui.allowItemPlacement) {
+        if(!gui.allowItemPlacement || gui.hasAttachedGui) {
             isCancelled = true
             return
         }

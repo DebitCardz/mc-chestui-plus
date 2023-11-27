@@ -16,6 +16,11 @@ internal class GUIItemPlaceListener(gui: GUI) : GUIEventListener(gui) {
             return
         }
 
+        if(gui.hasAttachedGui) {
+            isCancelled = true
+            return
+        }
+
         if(
             action == InventoryAction.MOVE_TO_OTHER_INVENTORY
             && isShiftClick
