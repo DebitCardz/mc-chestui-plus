@@ -8,7 +8,7 @@ val githubActor = project.findProperty("gpr.user") as String? ?: System.getenv("
 val githubToken = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
 
 group = "me.tech"
-version = "1.4.3"
+version = "1.4.2"
 
 repositories {
     mavenCentral()
@@ -22,9 +22,11 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+kotlin {
+    jvmToolchain(17)
+}
 
+java {
     withJavadocJar()
     withSourcesJar()
 }
