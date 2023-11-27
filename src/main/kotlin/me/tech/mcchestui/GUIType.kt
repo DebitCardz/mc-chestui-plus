@@ -7,9 +7,15 @@ import org.bukkit.inventory.Inventory
 
 sealed class GUIType(
 	val slotsPerRow: Int,
-	open val rows: Int,
+	val rows: Int,
 	val inventoryType: InventoryType
 ) {
+	/**
+	 * @return total amount of slots a [InventoryType] can hold.
+	 */
+	val totalSlots: Int
+		get() = slotsPerRow * rows
+
 	 internal open fun createBukkitInventory(
 		 title: Component
 	 ): Inventory {
