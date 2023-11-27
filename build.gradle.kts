@@ -1,14 +1,14 @@
 plugins {
     kotlin("jvm") version "1.9.20"
 
-    id("maven-publish")
+    `maven-publish`
 }
 
 val githubActor = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
 val githubToken = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
 
 group = "me.tech"
-version = "1.4.1"
+version = "1.4.2"
 
 repositories {
     mavenCentral()
@@ -17,8 +17,13 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    implementation(kotlin("stdlib"))
+
+    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 java {
