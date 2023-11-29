@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>com.github.DebitCardz</groupId>
     <artifactId>mc-chestui-plus</artifactId>
-    <version>1.4.2/version>
+    <version>1.4.2</version>
 </dependency>
 
 ```
