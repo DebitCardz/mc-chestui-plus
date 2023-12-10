@@ -23,6 +23,18 @@ fun GUI.Slot.item(
 
 /**
  * Construct a [ItemStack] to be placed in a [GUI.Slot].
+ * @param stack item stack.
+ * @param builder [GUIItem] builder.
+ */
+fun GUI.Slot.item(
+	stack: ItemStack,
+	builder: GUIItem.() -> Unit = {}
+): GUIItem {
+	return guiItem(stack, builder)
+}
+
+/**
+ * Construct a [ItemStack] to be placed in a [GUI.Slot].
  * @param type material type.
  * @param builder [GUIItem] builder.
  */
@@ -33,14 +45,30 @@ fun guiItem(
 	return GUIItem(type).apply(builder)
 }
 
-open class GUIItem(
-	type: Material
+/**
+ * Construct a [ItemStack] to be placed in a [GUI.Slot].
+ * @param stack item stack.
+ * @param builder [GUIItem] builder.
+ */
+fun guiItem(
+	stack: ItemStack,
+	builder: GUIItem.() -> Unit = {}
+): GUIItem {
+	return GUIItem(stack).apply(builder)
+}
+
+
+open class GUIItem constructor(
+	private val itemStack: ItemStack
 ) {
+	constructor(type: Material)
+			: this(ItemStack(type, 1))
+
 	/**
 	 * [ItemStack] of the [GUIItem].
 	 */
-	var stack = ItemStack(type, 1)
-		private set
+	val stack: ItemStack
+		get() = itemStack.clone()
 
 	/**
 	 * [ItemMeta] of the [GUIItem].
@@ -54,19 +82,11 @@ open class GUIItem(
 	var removeParentItalics = true
 
 	/**
-	 * Modify the [ItemStack] of the [GUIItem].
-	 * @param builder [ItemStack] builder.
-	 */
-	fun stack(builder: ItemStack.() -> Unit) {
-		stack.apply(builder)
-	}
-
-	/**
 	 * Modify the [Material] of the [GUIItem].
 	 * @param material [Material] to set to.
 	 */
 	fun material(material: Material) {
-		stack.type = material
+		itemStack.type = material
 	}
 
 	/**
@@ -81,7 +101,7 @@ open class GUIItem(
 				value
 			}
 
-			stack.editMeta {
+			itemStack.editMeta {
 				it.displayName(name)
 			}
 		}
@@ -98,7 +118,7 @@ open class GUIItem(
 				value
 			}
 
-			stack.editMeta {
+			itemStack.editMeta {
 				it.lore(sanitizeLore(lore))
 			}
 		}
@@ -107,9 +127,9 @@ open class GUIItem(
 	 * Current [ItemStack] size.
 	 */
 	var amount: Int
-		get() = stack.amount
+		get() = itemStack.amount
 		set(value) {
-			stack.amount = value
+			itemStack.amount = value
 		}
 
 	/**
@@ -117,7 +137,7 @@ open class GUIItem(
 	 */
 	var glowing: Boolean = false
 		set(value) {
-			stack.editMeta {
+			itemStack.editMeta {
 				if(value) {
 					it.addEnchant(Enchantment.ARROW_INFINITE, 0, true)
 					it.addItemFlags(ItemFlag.HIDE_ENCHANTS)
@@ -136,7 +156,7 @@ open class GUIItem(
 	var customModelData: Int
 		get() = itemMeta.customModelData
 		set(value) {
-			stack.editMeta {
+			itemStack.editMeta {
 				it.setCustomModelData(value)
 			}
 		}
