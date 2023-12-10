@@ -14,6 +14,7 @@ import me.tech.mcchestui.listeners.hotbar.*
 import me.tech.mcchestui.listeners.item.*
 import me.tech.mcchestui.utils.*
 import net.kyori.adventure.text.Component
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.*
 import org.bukkit.inventory.Inventory
@@ -184,7 +185,15 @@ class GUI(
 	inner class Slot {
 		var item: GUIItem? = null
 		var allowPickup: Boolean = false
-		var onClick: GUISlotClickEvent? = null
+		internal var onClick: GUISlotClickEvent? = null
+
+		/**
+		 * [GUISlotClickEvent] creator to give it a label.
+		 * @param builder [GUISlotClickEvent] builder.
+		 */
+		fun onClick(builder: GUISlotClickEvent? = null) {
+			onClick = builder
+		}
 	}
 
 	/**
