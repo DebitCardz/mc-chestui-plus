@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.DebitCardz:mc-chestui-plus:1.4.0")
+    implementation("com.github.DebitCardz:mc-chestui-plus:1.4.2")
 }
 ```
 ### Maven
@@ -34,7 +34,7 @@ dependencies {
 <dependency>
     <groupId>com.github.DebitCardz</groupId>
     <artifactId>mc-chestui-plus</artifactId>
-    <version>1.4.0/version>
+    <version>1.4.2</version>
 </dependency>
 
 ```
