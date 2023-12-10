@@ -39,7 +39,8 @@ open class GUIItem(
 	/**
 	 * [ItemStack] of the [GUIItem].
 	 */
-	val stack = ItemStack(type, 1)
+	var stack = ItemStack(type, 1)
+		private set
 
 	/**
 	 * [ItemMeta] of the [GUIItem].
@@ -58,6 +59,14 @@ open class GUIItem(
 	 */
 	fun stack(builder: ItemStack.() -> Unit) {
 		stack.apply(builder)
+	}
+
+	/**
+	 * Modify the [Material] of the [GUIItem].
+	 * @param material [Material] to set to.
+	 */
+	fun material(material: Material) {
+		stack.type = material
 	}
 
 	/**
