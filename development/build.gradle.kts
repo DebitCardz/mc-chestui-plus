@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     implementation(rootProject)
 }
 
@@ -28,7 +28,7 @@ tasks.jar {
 }
 
 tasks.withType<RunServer> {
-    minecraftVersion("1.20.2")
+    minecraftVersion("1.20.4")
 }
 
 bukkit {
