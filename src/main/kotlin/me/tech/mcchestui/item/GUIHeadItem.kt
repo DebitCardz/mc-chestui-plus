@@ -41,7 +41,7 @@ class GUIHeadItem : GUIItem(Material.PLAYER_HEAD) {
     var skullOwner: OfflinePlayer?
         get() = itemMeta.owningPlayer
         set(value) {
-            stack.editMeta(SkullMeta::class.java) {
+            itemStack.editMeta(SkullMeta::class.java) {
                 it.owningPlayer = value
             }
         }
@@ -54,7 +54,7 @@ class GUIHeadItem : GUIItem(Material.PLAYER_HEAD) {
     var playerProfile: PlayerProfile?
         get() = itemMeta.playerProfile
         set(value) {
-            stack.editMeta(SkullMeta::class.java) {
+            itemStack.editMeta(SkullMeta::class.java) {
                 it.playerProfile = value
             }
         }

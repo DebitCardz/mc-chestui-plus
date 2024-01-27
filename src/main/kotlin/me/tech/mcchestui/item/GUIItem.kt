@@ -59,7 +59,7 @@ fun guiItem(
 
 
 open class GUIItem constructor(
-	private val itemStack: ItemStack
+	protected val itemStack: ItemStack
 ) {
 	constructor(type: Material)
 			: this(ItemStack(type, 1))
