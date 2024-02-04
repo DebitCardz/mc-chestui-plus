@@ -43,7 +43,7 @@ sealed class GUIType(
 	 data object Dispenser : GUIType(
 		 slotsPerRow = 3,
 		 rows = 3,
-		 inventoryType = InventoryType.HOPPER
+		 inventoryType = InventoryType.DISPENSER
 	 )
 
 	data object Hopper : GUIType(
