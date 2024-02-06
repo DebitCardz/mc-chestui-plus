@@ -2,7 +2,6 @@ package me.tech.mcchestui.listeners.hotbar
 
 import me.tech.mcchestui.GUI
 import me.tech.mcchestui.listeners.GUIEventListener
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
