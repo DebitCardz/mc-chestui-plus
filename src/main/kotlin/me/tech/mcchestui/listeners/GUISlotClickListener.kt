@@ -17,14 +17,23 @@ internal class GUISlotClickListener(gui: GUI) : GUIEventListener(gui) {
         val guiSlot = gui.slots.getOrNull(slot)
             ?: return // handle cancellation of task in onPlace.
 
-        if(click == ClickType.DROP || click == ClickType.CONTROL_DROP) {
-            if(!guiSlot.allowPickup) {
+        if(click in PICKUP_CLICK_ACTIONS) {
+            if(!gui.allowItemPickup) {
                 isCancelled = true
+                return
             }
         }
 
         guiSlot.onClick?.let { uiEvent ->
             uiEvent(this, whoClicked as Player)
         }
+    }
+
+    companion object {
+        private val PICKUP_CLICK_ACTIONS = setOf(
+            ClickType.DROP,
+            ClickType.CONTROL_DROP,
+            ClickType.SWAP_OFFHAND
+        )
     }
 }
