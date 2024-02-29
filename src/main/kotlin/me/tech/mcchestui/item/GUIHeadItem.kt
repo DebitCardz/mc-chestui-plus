@@ -5,6 +5,7 @@ import me.tech.mcchestui.GUI
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.inventory.meta.SkullMeta
 
 /**
@@ -32,6 +33,14 @@ fun guiHeadItem(
 class GUIHeadItem : GUIItem(Material.PLAYER_HEAD) {
     override val itemMeta: SkullMeta
         get() = stack.itemMeta as SkullMeta
+
+    /**
+     * Modify the [SkullMeta] of the [GUIItem].
+     * @param builder [SkullMeta] builder.
+     */
+    fun meta(builder: SkullMeta.() -> Unit) {
+        itemStack.editMeta(SkullMeta::class.java, builder)
+    }
 
     /**
      * Current [OfflinePlayer] that owns the player head.

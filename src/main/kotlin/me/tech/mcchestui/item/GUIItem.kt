@@ -90,6 +90,14 @@ open class GUIItem constructor(
 	}
 
 	/**
+	 * Modify the [ItemMeta] of the [GUIItem].
+	 * @param builder [ItemMeta] builder.
+	 */
+	fun meta(builder: ItemMeta.() -> Unit) {
+		itemStack.editMeta(builder)
+	}
+
+	/**
 	 * Current display name of the [ItemStack].
 	 */
 	var name: Component?
@@ -160,6 +168,26 @@ open class GUIItem constructor(
 				it.setCustomModelData(value)
 			}
 		}
+
+	/**
+	 * Add [ItemFlag] to the [ItemStack].
+	 * @param flags [ItemFlag] to add.
+	 */
+	fun addFlags(vararg flags: ItemFlag) {
+		itemStack.editMeta {
+			it.addItemFlags(*flags)
+		}
+	}
+
+	/**
+	 * Remove [ItemFlag] from the [ItemStack].
+	 * @param flags [ItemFlag] to remove.
+	 */
+	fun removeFlags(vararg flags: ItemFlag) {
+		itemStack.editMeta {
+			it.removeItemFlags(*flags)
+		}
+	}
 
 	/**
 	 * Remove the italics of a [Component] if it is not already
