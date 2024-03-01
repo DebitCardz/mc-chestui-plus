@@ -38,7 +38,7 @@ class GUIHeadItem : GUIItem(Material.PLAYER_HEAD) {
      * Modify the [SkullMeta] of the [GUIItem].
      * @param builder [SkullMeta] builder.
      */
-    fun meta(builder: SkullMeta.() -> Unit) {
+    fun skullMeta(builder: SkullMeta.() -> Unit) {
         itemStack.editMeta(SkullMeta::class.java, builder)
     }
 
