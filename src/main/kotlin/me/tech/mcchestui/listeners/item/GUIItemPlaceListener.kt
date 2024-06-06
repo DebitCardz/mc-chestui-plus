@@ -38,8 +38,6 @@ internal class GUIItemPlaceListener(gui: GUI) : GUIEventListener(gui) {
                 isCancelled = true
                 return
             }
-        } else {
-            return
         }
 
         val guiSlot = gui.slots.getOrNull(slot)
