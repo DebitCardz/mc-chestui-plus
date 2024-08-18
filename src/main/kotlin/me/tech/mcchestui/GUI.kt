@@ -73,6 +73,12 @@ class GUI(
 	var allowItemPlacement: Boolean = false
 
 	/**
+	 * Allow for [ItemStack] to be shift-clicked into the [GUI].
+	 * Requires [allowItemPlacement] to be true to work.
+	 */
+	var allowShiftClick: Boolean = false
+
+	/**
 	 * Allow for [ItemStack] to be dragged within the [GUI].
 	 */
 	var allowItemDrag: Boolean = false

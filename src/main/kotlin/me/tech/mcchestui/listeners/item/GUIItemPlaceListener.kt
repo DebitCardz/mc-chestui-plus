@@ -2,11 +2,11 @@ package me.tech.mcchestui.listeners.item
 
 import me.tech.mcchestui.GUI
 import me.tech.mcchestui.listeners.GUIEventListener
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryMoveItemEvent
 
 internal class GUIItemPlaceListener(gui: GUI) : GUIEventListener(gui) {
     @EventHandler
@@ -26,7 +26,7 @@ internal class GUIItemPlaceListener(gui: GUI) : GUIEventListener(gui) {
             && isShiftClick
             && !gui.isBukkitInventory(clickedInventory) // make sure its incoming.
         ) {
-            if(!gui.allowItemPlacement) {
+            if(!gui.allowItemPlacement || !gui.allowShiftClick) {
                 isCancelled = true
                 return
             }
@@ -42,17 +42,20 @@ internal class GUIItemPlaceListener(gui: GUI) : GUIEventListener(gui) {
             return
         }
 
-        val guiSlot = gui.slots.getOrNull(slot)
-        if(guiSlot != null) {
-            if(!guiSlot.allowPickup) {
-                isCancelled = true
-                return
+        val originatesFromPlayerInventory = !gui.isBukkitInventory(clickedInventory)
+        if(!originatesFromPlayerInventory) {
+            val guiSlot = gui.slots.getOrNull(slot)
+            if(guiSlot != null) {
+                if(!guiSlot.allowPickup) {
+                    isCancelled = true
+                    return
+                }
             }
         }
 
-        val itemStack = cursor
+        val itemStack = (if(isShiftClick) currentItem else cursor)
             ?: return
-        if(itemStack.type == Material.AIR) {
+        if(itemStack.type.isEmpty) {
             return
         }
 
