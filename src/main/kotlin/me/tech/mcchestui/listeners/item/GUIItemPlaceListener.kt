@@ -6,7 +6,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.event.inventory.InventoryMoveItemEvent
 
 internal class GUIItemPlaceListener(gui: GUI) : GUIEventListener(gui) {
     @EventHandler

@@ -33,24 +33,24 @@ internal class GUIItemDragListener(gui: GUI) : GUIEventListener(gui) {
 
             val itemStack = newItems.values.firstOrNull()
                 ?: return
-            if(itemStack.type == Material.AIR) {
+            if(itemStack.type.isEmpty) {
                 return
             }
 
-            gui.onPlaceItem?.let { uiEvent ->
-                // TODO: Look for better method of handling this.
-                val fakeEvent = InventoryClickEvent(
-                    view,
-                    InventoryType.SlotType.CONTAINER,
-                    slotIndex,
-                    if(type == DragType.SINGLE) ClickType.RIGHT else ClickType.LEFT,
-                    InventoryAction.PLACE_ALL
-                )
-
-                uiEvent(fakeEvent, whoClicked as Player, itemStack, slotIndex).let { outcome ->
-                    isCancelled = outcome
-                }
-            }
+//            gui.onPlaceItem?.let { uiEvent ->
+//                // TODO: Look for better method of handling this.
+//                val fakeEvent = InventoryClickEvent(
+//                    view,
+//                    InventoryType.SlotType.CONTAINER,
+//                    slotIndex,
+//                    if(type == DragType.SINGLE) ClickType.RIGHT else ClickType.LEFT,
+//                    InventoryAction.PLACE_ALL
+//                )
+//
+//                uiEvent(fakeEvent, whoClicked as Player, itemStack, slotIndex).let { outcome ->
+//                    isCancelled = outcome
+//                }
+//            }
             return
         }
 
