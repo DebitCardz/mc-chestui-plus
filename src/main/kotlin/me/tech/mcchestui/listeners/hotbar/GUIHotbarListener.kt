@@ -47,7 +47,7 @@ internal class GUIHotbarListener(gui: GUI) : GUIEventListener(gui) {
             currentItem
         } ?: return
 
-        if(itemStack.type == Material.AIR) {
+        if(itemStack.type.isEmpty) {
             return
         }
 
@@ -92,7 +92,7 @@ internal class GUIHotbarListener(gui: GUI) : GUIEventListener(gui) {
 
         val itemStack = currentItem
             ?: return
-        if(itemStack.type == Material.AIR) {
+        if(itemStack.type.isEmpty) {
             return
         }
 

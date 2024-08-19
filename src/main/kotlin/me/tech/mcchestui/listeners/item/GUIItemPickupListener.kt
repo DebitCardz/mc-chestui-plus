@@ -21,6 +21,18 @@ internal class GUIItemPickupListener(gui: GUI): GUIEventListener(gui) {
             return
         }
 
+        if(clickedInventory == whoClicked.inventory) {
+            if(currentItem == null || currentItem?.type?.isEmpty == true) {
+                return
+            }
+
+            gui.onPlayerInventoryPickupItem?.let { uiEvent ->
+                uiEvent(this, whoClicked as Player, currentItem, slot).let { outcome ->
+                    isCancelled = outcome
+                }
+            }
+        }
+
         // handle shift click
         if(
             action == InventoryAction.MOVE_TO_OTHER_INVENTORY
@@ -53,7 +65,7 @@ internal class GUIItemPickupListener(gui: GUI): GUIEventListener(gui) {
 
         val itemStack = currentItem
             ?: return
-        if(itemStack.type == Material.AIR) {
+        if(itemStack.type.isEmpty) {
             return
         }
 

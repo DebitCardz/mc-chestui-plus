@@ -117,6 +117,11 @@ class GUI(
 	var onPickupItem: GUIItemPickupEvent? = null
 
 	/**
+	 * Event called when a [ItemStack] is taken from a [PlayerInventory].
+	 */
+	var onPlayerInventoryPickupItem: GUIItemPickupEvent? = null
+
+	/**
 	 * Event called when an item is dragged across a [GUI].
 	 * Requires [allowItemPlacement] to be true to work.
 	 */
