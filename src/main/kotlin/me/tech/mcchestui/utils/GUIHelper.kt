@@ -54,7 +54,7 @@ internal typealias GUIItemPlaceEvent = InventoryClickEvent.(player: Player, item
 /**
  * Event when a [ItemStack] or [GUI.Slot] is picked up.
  */
-internal typealias GUIItemPickupEvent = InventoryClickEvent.(player: Player, item: ItemStack?, slot: Int) -> Boolean
+internal typealias GUIItemPickupEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> Boolean
 
 /**
  * Event when an [ItemStack] is dragged across a [GUI].

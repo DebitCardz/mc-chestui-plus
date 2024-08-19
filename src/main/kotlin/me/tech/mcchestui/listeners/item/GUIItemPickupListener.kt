@@ -22,12 +22,14 @@ internal class GUIItemPickupListener(gui: GUI): GUIEventListener(gui) {
         }
 
         if(clickedInventory == whoClicked.inventory) {
-            if(currentItem == null || currentItem?.type?.isEmpty == true) {
+            val itemStack = currentItem
+                ?: return
+            if(itemStack.type.isEmpty) {
                 return
             }
 
             gui.onPlayerInventoryPickupItem?.let { uiEvent ->
-                uiEvent(this, whoClicked as Player, currentItem, slot).let { outcome ->
+                uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
                     isCancelled = outcome
                 }
             }
