@@ -86,4 +86,9 @@ fun mainGUI(): GUI {
         }
     }
 }
+
+fun open(player: Player) {
+  player.sendMessage(Component.text("Opening Main GUI...", NamedTextColor.GRAY))
+  player.openGUI(mainGUI())
+}
 ```
