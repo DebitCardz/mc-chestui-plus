@@ -11,3 +11,7 @@ if(System.getenv("JITPACK") != null) {
         startParameter.excludedTaskNames += ":development:$it"
     }
 }
+include("common")
+include("paper")
+include("minestom")
+include("development")

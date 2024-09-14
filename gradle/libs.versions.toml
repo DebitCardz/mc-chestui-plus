@@ -1,0 +1,14 @@
+[versions]
+kotlin = "2.0.10"
+
+paper = "1.19.4-R0.1-SNAPSHOT"
+
+kyori = "4.17.0"
+
+[libraries]
+paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+
+adventureApi = { module = "net.kyori:adventure-api", version.ref = "kyori" }
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
