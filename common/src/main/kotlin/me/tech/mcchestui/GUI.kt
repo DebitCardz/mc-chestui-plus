@@ -1,6 +1,7 @@
 package me.tech.mcchestui
 
 import me.tech.mcchestui.item.GUIItem
+import me.tech.mcchestui.template.toTemplateMap
 import net.kyori.adventure.text.Component
 
 /**
@@ -40,6 +41,9 @@ abstract class GUI<I : GUIItem, C : Any>(
 
     /** The [Slot] that compose the [GUI]. */
     var slots = arrayOfNulls<Slot>(type.totalSize)
+
+    /** Chars mapped to Slot Builders for GUI templating. */
+    protected var templateSlots = mutableMapOf<Char, Slot>()
 
     /** Whether the [GUI] is currently initialized. */
     protected var initialized = false
@@ -174,11 +178,62 @@ abstract class GUI<I : GUIItem, C : Any>(
         slot(firstEmptySlot, builder)
     }
 
-    abstract fun title(title: Component)
+    /**
+     * Structure the template of the [GUI].
+     * @param template [GUI] string template.
+     */
+    fun template(vararg template: String) {
+        val map = toTemplateMap(template)
 
-    protected abstract fun registerListeners()
+        for((yIndex, chars) in map) {
+            if (chars.isEmpty()) {
+                continue
+            }
 
-    abstract fun unregister()
+            for((xIndex, char) in chars.withIndex()) {
+                val slot = templateSlots[char]
+                    ?: continue
+
+                slot(xIndex + 1, yIndex, slot)
+            }
+        }
+    }
+
+    /**
+     * Define chars to be used for templating.
+     * @param char template character
+     * @param slot slot
+     */
+    fun addTemplateSlot(char: Char, slot: Slot) {
+        templateSlots[char] = slot
+    }
+
+    /**
+     * Define chars to be used for templating.
+     *
+     * @param char template character
+     * @param builder slot builder
+     */
+    fun addTemplateSlot(char: Char, builder: Slot.() -> Unit) {
+        templateSlots[char] = Slot().apply(builder)
+    }
+
+    /**
+     * Rename the [GUI] for all of its viewers.
+     * Will re-open the GUI by just copying the items
+     * held within it while not applying [render]
+     * @param title new [GUI] title.
+     */
+    abstract fun guiTitle(title: Component)
+
+    protected open fun registerListeners() {
+        check(!initialized) { "cannot re-register listeners" }
+    }
+
+    open fun unregister() {
+        check(initialized) { "gui must be initialized" }
+        check(!unregistered) { "gui is already unregistered" }
+    }
 }
 
 // we just dont care about the type of gui provided to re-render.

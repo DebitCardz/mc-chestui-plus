@@ -10,9 +10,9 @@ import org.bukkit.event.inventory.InventoryClickEvent
 
 internal class GUIItemPlaceListener(gui: PaperGUI) : GUIEventListener(gui) {
     @EventHandler
-    internal fun InventoryClickEvent.itemPlace() {
+    internal fun itemPlace(ev: InventoryClickEvent) {
         // ensure top inventory is ui inventory.
-        if(!isSame(inventory)) {
+        if(!isSame(ev.inventory)) {
             return
         }
 
@@ -23,46 +23,46 @@ internal class GUIItemPlaceListener(gui: PaperGUI) : GUIEventListener(gui) {
 //        }
 
         if(
-            action == InventoryAction.MOVE_TO_OTHER_INVENTORY
-            && isShiftClick
-            && !isSame(clickedInventory) // make sure its incoming.
+            ev.action == InventoryAction.MOVE_TO_OTHER_INVENTORY
+            && ev.isShiftClick
+            && !isSame(ev.clickedInventory) // make sure its incoming.
         ) {
             if(!gui.allowItemPlacement || !gui.allowShiftClick) {
-                isCancelled = true
+                ev.isCancelled = true
                 return
             }
         } else if(
-            action in PLACE_ACTIONS
-            && isSame(clickedInventory)
+            ev.action in PLACE_ACTIONS
+            && isSame(ev.clickedInventory)
         ) {
             if(!gui.allowItemPlacement) {
-                isCancelled = true
+                ev.isCancelled = true
                 return
             }
         } else {
             return
         }
 
-        val originatesFromPlayerInventory = !isSame(clickedInventory)
+        val originatesFromPlayerInventory = !isSame(ev.clickedInventory)
         if(!originatesFromPlayerInventory) {
-            val guiSlot = gui.slots.getOrNull(slot)
+            val guiSlot = gui.slots.getOrNull(ev.slot)
             if(guiSlot != null) {
                 if(!guiSlot.allowPickup) {
-                    isCancelled = true
+                    ev.isCancelled = true
                     return
                 }
             }
         }
 
-        val itemStack = (if(isShiftClick) currentItem else cursor)
+        val itemStack = (if(ev.isShiftClick) ev.currentItem else ev.cursor)
             ?: return
         if(itemStack.type.isEmpty) {
             return
         }
 
-        gui.onPlaceItem?.let { uiEvent ->
-            uiEvent(this, whoClicked as Player, itemStack, slot).let { outcome ->
-                isCancelled = outcome
+        gui.onPlaceItem?.let { dispatcher ->
+            dispatcher(ev, ev.whoClicked as Player, itemStack, ev.slot).let { cancelled ->
+                ev.isCancelled = cancelled
             }
         }
     }

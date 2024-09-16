@@ -4,6 +4,7 @@ import me.tech.mcchestui.GUI
 import me.tech.mcchestui.GUIRender
 import me.tech.mcchestui.GUIType
 import me.tech.mcchestui.paper.listener.GUIListener
+import me.tech.mcchestui.paper.listener.item.GUIHotbarListener
 import me.tech.mcchestui.paper.listener.item.GUIItemPickupListener
 import me.tech.mcchestui.paper.listener.item.GUIItemPlaceListener
 import net.kyori.adventure.text.Component
@@ -45,14 +46,15 @@ class PaperGUI(
     private val eventListeners = listOf(
         GUIListener(this),
         GUIItemPickupListener(this),
-        GUIItemPlaceListener(this)
+        GUIItemPlaceListener(this),
+        GUIHotbarListener(this)
     )
 
     init {
         registerListeners()
     }
 
-    override fun title(title: Component) {
+    override fun guiTitle(title: Component) {
         val clone = inventory.bukkitInventory
             .clone(title, type)
 
@@ -67,6 +69,8 @@ class PaperGUI(
     }
 
     override fun registerListeners() {
+        super.registerListeners()
+
         eventListeners.forEach {
             pluginInstance.server.pluginManager.registerEvents(it, pluginInstance)
         }
@@ -75,6 +79,14 @@ class PaperGUI(
     }
 
     override fun unregister() {
+        super.unregister()
+
+        // close inv for all viewers.
+        inventory.bukkitInventory
+            .viewers
+            .toList()
+            .forEach(HumanEntity::closeInventory)
+
         eventListeners.forEach(HandlerList::unregisterAll)
 
         unregistered = false

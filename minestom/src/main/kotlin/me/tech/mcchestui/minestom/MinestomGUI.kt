@@ -5,6 +5,7 @@ import me.tech.mcchestui.GUIType
 import me.tech.mcchestui.minestom.listener.GUIListener
 import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
 import java.util.*
@@ -28,12 +29,18 @@ class MinestomGUI(
         it === this.inventory.minestomInventory
     }
 
-    override fun title(title: Component) {
+    init {
+        registerListeners()
+    }
+
+    override fun guiTitle(title: Component) {
         // sends update window packet to viewers.
         inventory.minestomInventory.title = title
     }
 
     override fun registerListeners() {
+        super.registerListeners()
+
         val listener = GUIListener(this)
 
         eventNode.addListener(listener.slotClickNode())
@@ -45,6 +52,14 @@ class MinestomGUI(
     }
 
     override fun unregister() {
+        super.unregister()
+
+        // close inv for all viewers.
+        inventory.minestomInventory
+            .viewers
+            .toList()
+            .forEach(Player::closeInventory)
+
         MinecraftServer.getGlobalEventHandler()
             .removeChild(eventNode)
 

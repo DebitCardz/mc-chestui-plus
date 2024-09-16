@@ -1,11 +1,12 @@
 package me.tech.mcchestui.minestom.listener
 
 import me.tech.mcchestui.minestom.MinestomGUI
+import net.minestom.server.MinecraftServer
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.inventory.InventoryClickEvent
 import net.minestom.server.event.inventory.InventoryCloseEvent
+import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.event.trait.InventoryEvent
-import net.minestom.server.inventory.click.ClickType
 
 internal class GUIListener(
     private val gui: MinestomGUI
@@ -15,13 +16,19 @@ internal class GUIListener(
     fun slotClickNode() = EventListener.builder(InventoryClickEvent::class.java)
         .filter(listenerPredicate)
         .handler {
+            println(it.slot)
             val guiSlot = gui.slots.getOrNull(it.slot)
                 ?: return@handler // handle cancel in onPlace
+
+            guiSlot.onClick?.let { dispatcher ->
+                dispatcher(it, it.player)
+            }
         }
         .build()
 
     fun closeNode() = EventListener.builder(InventoryCloseEvent::class.java)
         .filter(listenerPredicate)
+        .ignoreCancelled(true) // cancelled by pickup
         .handler {
             if(it.inventory == null) {
                 return@handler
@@ -30,53 +37,22 @@ internal class GUIListener(
                 dispatcher(it, it.player)
             }
 
-            it.inventory?.let { inventory ->
-                if(inventory.viewers.size != 0 || gui.singleInstance) {
-                    return@handler
-                }
+            MinecraftServer.getSchedulerManager().scheduleNextTick {
+                it.inventory?.let { inventory ->
+                    if(inventory.viewers.size != 0 || gui.singleInstance) {
+                        return@scheduleNextTick
+                    }
 
-                gui.unregister()
+                    gui.unregister()
+                }
             }
         }
         .build()
 
-    internal companion object {
-//        /** All actions related to placing an item. */
-//        @JvmStatic
-//        protected val PLACE_ACTIONS = listOf(
-//            InventoryAction.PLACE_ONE,
-//            InventoryAction.PLACE_SOME,
-//            InventoryAction.PLACE_ALL,
-//            InventoryAction.SWAP_WITH_CURSOR
-//        )
-//
-//        /**
-//         * All actions related to using hotkeys to place/pickup
-//         * an item.
-//         */
-//        @JvmStatic
-//        protected val HOTBAR_ACTIONS = listOf(
-//            InventoryAction.HOTBAR_SWAP,
-//            InventoryAction.HOTBAR_MOVE_AND_READD
-//        )
-//
-//        /** All actions related to picking up an item. */
-//        @JvmStatic
-//        protected val PICKUP_ACTIONS = listOf(
-//            InventoryAction.PICKUP_ONE,
-//            InventoryAction.PICKUP_SOME,
-//            InventoryAction.PICKUP_HALF,
-//            InventoryAction.PICKUP_ALL,
-//            InventoryAction.SWAP_WITH_CURSOR,
-//            InventoryAction.COLLECT_TO_CURSOR
-//        )
+    fun itemPickupNode() = EventListener.builder(InventoryPreClickEvent::class.java)
+        .filter(listenerPredicate)
+        .handler {
 
-        /** Actions preformed when a player clicks a slot. */
-        @JvmStatic
-        protected val PICKUP_CLICK_ACTIONS = setOf(
-            ClickType.DROP,
-//            ClickType.CONTROL_DROP,
-//            ClickType.SWAP_OFFHAND
-        )
-    }
+        }
+        .build()
 }
