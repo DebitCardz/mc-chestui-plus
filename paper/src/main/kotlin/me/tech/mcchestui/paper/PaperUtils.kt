@@ -1,16 +1,16 @@
 package me.tech.mcchestui.paper
 
-import me.tech.mcchestui.GUI
-import me.tech.mcchestui.GUIRender
 import me.tech.mcchestui.GUIType
-import me.tech.mcchestui.paper.item.PaperGUIItem
 import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
 import org.bukkit.entity.HumanEntity
+import org.bukkit.event.inventory.InventoryType
+import org.bukkit.inventory.Inventory
 
 fun gui(
     title: Component,
     type: GUIType,
-    render: PaperGUIRender
+    render: PaperGUI.() -> Unit
 ): PaperGUI = PaperGUI(
     title,
     type,
@@ -24,4 +24,14 @@ fun HumanEntity.openGUI(gui: PaperGUI) {
 
     gui.inventory.bukkitInventory
         .let { openInventory(it) }
+}
+
+internal fun Inventory.clone(
+    title: Component,
+    type: GUIType
+): Inventory {
+    val clone = type.toBukkitInventory(title)
+    clone.contents = this.contents
+
+    return clone
 }

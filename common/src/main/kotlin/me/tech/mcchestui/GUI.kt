@@ -3,43 +3,58 @@ package me.tech.mcchestui
 import me.tech.mcchestui.item.GUIItem
 import net.kyori.adventure.text.Component
 
-abstract class GUI<T : GUIItem, ClickBuilder : Any>(
+/**
+ * GUI wrapper over the server implementations inventory system.
+ * @param I the type of [GUIItem] this GUI uses.
+ * @param C the type of GUI Slot Click Handler this GUI uses.
+ */
+abstract class GUI<I : GUIItem, C : Any>(
     /** Title of GUI. */
     val title: Component,
     /** Type of GUI to render. */
     val type: GUIType,
     /** Wrapped GUI Inventory. */
-    open val inventory: GUIInventory<T>,
+    open val inventory: GUIInventory<I>,
     /** Whether the current GUI is attached to a parent. */
     attached: Boolean,
     /** Render GUI State. */
-    private val render: GUIRender<T, ClickBuilder> = { }
+    private val render: GUIRender = { }
 ) {
-
     /** Allow for items to be placed into the [GUI]. */
     var allowItemPlacement = false
 
     /** Allow for items to be shift-clicked into the [GUI], requires [allowItemPlacement] to be **true**. */
     var allowShiftClick = false
 
-    protected var slots = arrayOfNulls<Slot>(type.totalSize)
+    /** Allow for items to be dragged within the [GUI]. */
+    var allowItemDrag = false
 
+    /** Allow for items to be taken from the [GUI]. */
+    var allowItemPickup = false
+
+    /** Allow for hotkeys to be used to pickup & place items within the [GUI]. */
+    var allowHotBarSwap = false
+
+    /** Whether this [GUI] is supposed to be persisted in memory or automatically unregistered. */
+    var singleInstance = false
+
+    /** The [Slot] that compose the [GUI]. */
+    var slots = arrayOfNulls<Slot>(type.totalSize)
+
+    /** Whether the [GUI] is currently initialized. */
     protected var initialized = false
 
+    /** Whether the [GUI] is currently registered or not. */
     var unregistered = false
         protected set
 
-    open inner class Slot {
-        var item: T? = null
-        var allowPickup: Boolean = false
-        protected var onClick: ClickBuilder? = null
+    inner class Slot {
+        var item: I? = null
+        var allowPickup = false
+        var onClick: C? = null
 
-        fun onClick(click: ClickBuilder?) {
-            this.onClick = click
-        }
-
-        fun removeClick() {
-            this.onClick = null
+        fun onClick(builder: C) {
+            this.onClick = builder
         }
     }
 
@@ -159,11 +174,13 @@ abstract class GUI<T : GUIItem, ClickBuilder : Any>(
         slot(firstEmptySlot, builder)
     }
 
+    abstract fun title(title: Component)
 
-    abstract fun registerListeners()
+    protected abstract fun registerListeners()
 
     abstract fun unregister()
 }
 
+// we just dont care about the type of gui provided to re-render.
 /** GUI Render function. */
-typealias GUIRender <T, C> = GUI<T, C>.() -> Unit
+typealias GUIRender = GUI<*, *>.() -> Unit

@@ -2,11 +2,13 @@
 kotlin = "2.0.10"
 
 paper = "1.19.4-R0.1-SNAPSHOT"
+minestom = "4305006e6b"
 
 kyori = "4.17.0"
 
 [libraries]
 paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+minestom = { module = "net.minestom:minestom-snapshots", version.ref = "minestom" }
 
 adventureApi = { module = "net.kyori:adventure-api", version.ref = "kyori" }
 

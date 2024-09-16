@@ -2,7 +2,9 @@ package me.tech.mcchestui.paper.item
 
 import me.tech.mcchestui.GUI
 import me.tech.mcchestui.item.GUIItem
+import me.tech.mcchestui.paper.AbstractPaperGUI
 import me.tech.mcchestui.paper.GUISlotClickEvent
+import me.tech.mcchestui.paper.item.PaperGUIItem
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Material
@@ -10,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
 fun GUI<PaperGUIItem, GUISlotClickEvent>.Slot.item(
-    type: Material = Material.AIR,
+    type: Material,
     builder: PaperGUIItem.() -> Unit = { }
 ): PaperGUIItem {
     return PaperGUIItem(type)

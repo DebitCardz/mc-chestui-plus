@@ -27,14 +27,18 @@ class PaperInventory(
     }
 }
 
-fun GUIType.toPaperInventory(title: Component): PaperInventory {
-    val bukkitInventory = when(this) {
+internal fun GUIType.toPaperInventory(title: Component): PaperInventory {
+    val bukkitInventory = toBukkitInventory(title)
+    return PaperInventory(bukkitInventory)
+}
+
+internal fun GUIType.toBukkitInventory(title: Component): Inventory {
+    return when(this) {
         is GUIType.Chest -> Bukkit.createInventory(null, slotsPerRow * rows, title)
         is GUIType.Hopper -> Bukkit.createInventory(null, InventoryType.HOPPER, title)
         is GUIType.Dispenser -> Bukkit.createInventory(null, InventoryType.DISPENSER, title)
         else -> error("invalid gui type specified $this.")
     }
-    return PaperInventory(bukkitInventory)
 }
 
 /** [GUIInventory] for Paper impl. */

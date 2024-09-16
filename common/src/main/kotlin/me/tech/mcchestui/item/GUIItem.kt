@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
 interface GUIItem {
+    /** Whether to remove default italics from the [ItemMeta]. */
     var removeParentItalics: Boolean
 
     var name: Component?
