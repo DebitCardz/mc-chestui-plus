@@ -9,7 +9,7 @@ fun gui(
     title: Component,
     type: GUIType,
     render: MinestomGUI.() -> Unit
-): MinestomGUI = MinestomGUI(
+): GUI = GUI(
     title,
     type,
     type.toMinestomInventory(title),
@@ -20,7 +20,7 @@ fun gui(
 /**
  * @return whether the gui was opened.
  */
-fun Player.openGUI(gui: MinestomGUI): Boolean {
+fun Player.openGUI(gui: GUI): Boolean {
     require(!gui.unregistered) { "gui must not be unregistered" }
 
     return gui.inventory.minestomInventory

@@ -2,6 +2,7 @@ package me.tech.mcchestui.minestom.item
 
 import me.tech.mcchestui.AbstractGUI
 import me.tech.mcchestui.item.GUIItem
+import me.tech.mcchestui.minestom.GUISlotClickEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.event.HoverEventSource
@@ -11,7 +12,7 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.tag.TagReadable
 
-fun AbstractGUI<MinestomGUIItem, *>.Slot.item(
+fun AbstractGUI<MinestomGUIItem, GUISlotClickEvent>.Slot.item(
     type: Material = Material.AIR,
     builder: MinestomGUIItem.() -> Unit = { }
 ): MinestomGUIItem {

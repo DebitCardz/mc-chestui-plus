@@ -1,6 +1,8 @@
 package me.tech.mcchestui.minestom.listener
 
+import me.tech.mcchestui.minestom.GUI
 import me.tech.mcchestui.minestom.MinestomGUI
+import me.tech.mcchestui.minestom.event.MinestomGUISlotClickEvent
 import me.tech.mcchestui.minestom.isPlayerInventory
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.inventory.InventoryPreClickEvent
@@ -14,6 +16,15 @@ internal class GUIItemPickupListener(gui: MinestomGUI) : GUIListener(gui) {
     private fun InventoryPreClickEvent.guiItemPickup() {
         val guiSlot = gui.slots.getOrNull(slot)
         if(guiSlot != null) {
+            // we need to dispatch this event here
+            // because if this is cancelled then
+            // InventoryClickEvent will literally never run.
+            GUI.GUI_EVENT_NODE
+                .call(MinestomGUISlotClickEvent.from(
+                    gui,
+                    preClick = this
+                ))
+
             if(!guiSlot.allowPickup) {
                 isCancelled = true
                 return

@@ -9,13 +9,8 @@ import me.tech.mcchestui.minestom.listener.GUISlotClickListener
 import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
-import net.minestom.server.event.EventBinding
 import net.minestom.server.event.EventFilter
-import net.minestom.server.event.EventListener
 import net.minestom.server.event.EventNode
-import net.minestom.server.event.inventory.InventoryClickEvent
-import net.minestom.server.event.inventory.InventoryCloseEvent
-import net.minestom.server.inventory.Inventory
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
@@ -79,7 +74,7 @@ class MinestomGUI(
         initialized = false
     }
 
-    private companion object {
+    internal companion object {
         val GUI_EVENT_NODE = EventNode.type("mc-chestui", EventFilter.INVENTORY)
             .apply { priority = 1 }
 
