@@ -26,6 +26,14 @@ class MinestomInventory(
         return minestomInventory.itemStacks
             .indexOfFirst { it.isAir }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if(other is Inventory) {
+            return other === minestomInventory
+        }
+
+        return super.equals(other)
+    }
 }
 
 fun GUIType.toMinestomInventory(title: Component): MinestomInventory {

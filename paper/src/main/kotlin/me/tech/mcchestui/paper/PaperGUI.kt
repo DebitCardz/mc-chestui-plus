@@ -1,6 +1,6 @@
 package me.tech.mcchestui.paper
 
-import me.tech.mcchestui.GUI
+import me.tech.mcchestui.AbstractGUI
 import me.tech.mcchestui.GUIRender
 import me.tech.mcchestui.GUIType
 import me.tech.mcchestui.paper.listener.GUIListener
@@ -32,10 +32,10 @@ class PaperGUI(
     override var inventory: PaperInventory = inventory
         private set
 
-    /** Dispatched when an [ItemStack] is placed into a [GUI]. */
+    /** Dispatched when an [ItemStack] is placed into a [AbstractGUI]. */
     var onPlaceItem: GUIItemPlaceEvent? = null
 
-    /** Dispatched when a [ItemStack] not registered to a [GUI.Slot] is taken from a [GUI]. */
+    /** Dispatched when a [ItemStack] not registered to a [AbstractGUI.Slot] is taken from a [AbstractGUI]. */
     var onPickupItem: GUIItemPickupEvent? = null
 
     /** Dispatched when a [ItemStack] is taken from a [PlayerInventory]. */

@@ -3,6 +3,7 @@ package me.tech.mcchestui.minestom
 import me.tech.mcchestui.GUIType
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
+import net.minestom.server.inventory.Inventory
 
 fun gui(
     title: Component,
@@ -25,3 +26,6 @@ fun Player.openGUI(gui: MinestomGUI): Boolean {
     return gui.inventory.minestomInventory
         .let { openInventory(it) }
 }
+
+internal fun Inventory?.isPlayerInventory(): Boolean =
+    this == null

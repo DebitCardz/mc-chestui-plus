@@ -9,7 +9,7 @@ import net.kyori.adventure.text.Component
  * @param I the type of [GUIItem] this GUI uses.
  * @param C the type of GUI Slot Click Handler this GUI uses.
  */
-abstract class GUI<I : GUIItem, C : Any>(
+abstract class AbstractGUI<I : GUIItem, C : Any>(
     /** Title of GUI. */
     val title: Component,
     /** Type of GUI to render. */
@@ -21,34 +21,34 @@ abstract class GUI<I : GUIItem, C : Any>(
     /** Render GUI State. */
     private val render: GUIRender = { }
 ) {
-    /** Allow for items to be placed into the [GUI]. */
+    /** Allow for items to be placed into the [AbstractGUI]. */
     var allowItemPlacement = false
 
-    /** Allow for items to be shift-clicked into the [GUI], requires [allowItemPlacement] to be **true**. */
+    /** Allow for items to be shift-clicked into the [AbstractGUI], requires [allowItemPlacement] to be **true**. */
     var allowShiftClick = false
 
-    /** Allow for items to be dragged within the [GUI]. */
+    /** Allow for items to be dragged within the [AbstractGUI]. */
     var allowItemDrag = false
 
-    /** Allow for items to be taken from the [GUI]. */
+    /** Allow for items to be taken from the [AbstractGUI]. */
     var allowItemPickup = false
 
-    /** Allow for hotkeys to be used to pickup & place items within the [GUI]. */
+    /** Allow for hotkeys to be used to pickup & place items within the [AbstractGUI]. */
     var allowHotBarSwap = false
 
-    /** Whether this [GUI] is supposed to be persisted in memory or automatically unregistered. */
+    /** Whether this [AbstractGUI] is supposed to be persisted in memory or automatically unregistered. */
     var singleInstance = false
 
-    /** The [Slot] that compose the [GUI]. */
+    /** The [Slot] that compose the [AbstractGUI]. */
     var slots = arrayOfNulls<Slot>(type.totalSize)
 
     /** Chars mapped to Slot Builders for GUI templating. */
     protected var templateSlots = mutableMapOf<Char, Slot>()
 
-    /** Whether the [GUI] is currently initialized. */
+    /** Whether the [AbstractGUI] is currently initialized. */
     protected var initialized = false
 
-    /** Whether the [GUI] is currently registered or not. */
+    /** Whether the [AbstractGUI] is currently registered or not. */
     var unregistered = false
         protected set
 
@@ -179,8 +179,8 @@ abstract class GUI<I : GUIItem, C : Any>(
     }
 
     /**
-     * Structure the template of the [GUI].
-     * @param template [GUI] string template.
+     * Structure the template of the [AbstractGUI].
+     * @param template [AbstractGUI] string template.
      */
     fun template(vararg template: String) {
         val map = toTemplateMap(template)
@@ -219,10 +219,10 @@ abstract class GUI<I : GUIItem, C : Any>(
     }
 
     /**
-     * Rename the [GUI] for all of its viewers.
+     * Rename the [AbstractGUI] for all of its viewers.
      * Will re-open the GUI by just copying the items
      * held within it while not applying [render]
-     * @param title new [GUI] title.
+     * @param title new [AbstractGUI] title.
      */
     abstract fun guiTitle(title: Component)
 
@@ -238,4 +238,4 @@ abstract class GUI<I : GUIItem, C : Any>(
 
 // we just dont care about the type of gui provided to re-render.
 /** GUI Render function. */
-typealias GUIRender = GUI<*, *>.() -> Unit
+typealias GUIRender = AbstractGUI<*, *>.() -> Unit
