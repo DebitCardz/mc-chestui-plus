@@ -4,12 +4,23 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 
 interface GUIItem {
-    /** Whether to remove default italics from the [ItemMeta]. */
+    /** Whether to remove default italics from the item. */
     var removeParentItalics: Boolean
 
+    /** The display name of the item. */
     var name: Component?
 
+    /** The lore of the item. */
     var lore: Collection<Component>?
+
+    /** The amount of the item. */
+    var amount: Int
+
+    /** The custom model data attached to the item. */
+    var customModelData: Int?
+
+    /** Whether the item appears to be glowing or not. */
+    var glowing: Boolean
 
     /**
      * Remove the italics of a [Component] if it is not already

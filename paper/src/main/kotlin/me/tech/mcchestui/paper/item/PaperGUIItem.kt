@@ -5,6 +5,8 @@ import me.tech.mcchestui.item.GUIItem
 import me.tech.mcchestui.paper.GUISlotClickEvent
 import net.kyori.adventure.text.Component
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
@@ -53,7 +55,59 @@ class PaperGUIItem(
         get() = type
         set(value) { type = value }
 
+    /** Current [ItemStack] size. */
+    override var amount: Int = 1
+
+    /**
+     * Whether the [ItemStack] is glowing.
+     */
+    override var glowing: Boolean = false
+        set(value) {
+            editMeta {
+                if(value) {
+                    it.addEnchant(Enchantment.ARROW_INFINITE, 0, true)
+                    it.addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                } else {
+                    it.removeEnchant(Enchantment.ARROW_INFINITE)
+                    it.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+                }
+            }
+
+            field = value
+        }
+
+    /**
+     * Custom model data id of the [ItemStack].
+     */
+    override var customModelData: Int?
+        get() = itemMeta.customModelData
+        set(value) {
+            editMeta {
+                it.setCustomModelData(value)
+            }
+        }
+
     fun displayName(name: Component?) {
         this.name = name
+    }
+
+    /**
+     * Add [ItemFlag] to the [ItemStack].
+     * @param flags [ItemFlag] to add.
+     */
+    fun addFlags(vararg flags: ItemFlag) {
+        editMeta {
+            it.addItemFlags(*flags)
+        }
+    }
+
+    /**
+     * Remove [ItemFlag] from the [ItemStack].
+     * @param flags [ItemFlag] to remove.
+     */
+    fun removeFlags(vararg flags: ItemFlag) {
+        editMeta {
+            it.removeItemFlags(*flags)
+        }
     }
 }

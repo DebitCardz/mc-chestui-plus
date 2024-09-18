@@ -51,6 +51,11 @@ class MinestomGUI(
         inventory.minestomInventory.title = title
     }
 
+    fun onPickupItem(dispatcher: GUIItemPickupEvent) { onPickupItem = dispatcher }
+    fun onPlayerInventoryPickupItem(dispatcher: GUIItemPickupEvent) { onPlayerInventoryPickupItem = dispatcher }
+    fun onPlaceItem(dispatcher: GUIItemPlaceEvent) { onPlaceItem = dispatcher }
+    fun onCloseInventory(dispatcher: GUICloseEvent) { onCloseInventory = dispatcher }
+
     override fun registerListeners() {
         super.registerListeners()
 

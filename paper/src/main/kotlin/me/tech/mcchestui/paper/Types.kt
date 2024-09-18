@@ -1,6 +1,7 @@
 package me.tech.mcchestui.paper
 
 import me.tech.mcchestui.AbstractGUI
+import me.tech.mcchestui.EventResult
 import me.tech.mcchestui.paper.item.PaperGUIItem
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -17,10 +18,10 @@ internal typealias AbstractPaperGUI = AbstractGUI<PaperGUIItem, GUISlotClickEven
 internal typealias PaperGUIRender = PaperGUI.() -> Unit
 
 /** Dispatched when a [ItemStack] or [AbstractGUI.Slot] is picked up. */
-internal typealias GUIItemPickupEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> Boolean
+internal typealias GUIItemPickupEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> EventResult
 
 /** Event when an [ItemStack] interaction is preformed with a [AbstractGUI]. */
-internal typealias GUIItemPlaceEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> Boolean
+internal typealias GUIItemPlaceEvent = InventoryClickEvent.(player: Player, item: ItemStack, slot: Int) -> EventResult
 
 /** Dispatched when a [AbstractGUI] is closed. */
 internal typealias GUICloseEvent = InventoryCloseEvent.(player: Player) -> Unit

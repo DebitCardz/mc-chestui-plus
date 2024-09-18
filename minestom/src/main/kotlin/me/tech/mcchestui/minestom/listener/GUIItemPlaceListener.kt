@@ -1,5 +1,6 @@
 package me.tech.mcchestui.minestom.listener
 
+import me.tech.mcchestui.AbstractGUI
 import me.tech.mcchestui.minestom.MinestomGUI
 import me.tech.mcchestui.minestom.isPlayerInventory
 import net.minestom.server.event.EventListener
@@ -61,7 +62,7 @@ internal class GUIItemPlaceListener(gui: MinestomGUI) : GUIListener(gui) {
 
         gui.onPlaceItem?.let { dispatcher ->
             dispatcher(this, player, itemStack, slot).let {
-                cancelled -> isCancelled = cancelled
+                cancelled -> isCancelled = cancelled.isCancelled
             }
         }
     }

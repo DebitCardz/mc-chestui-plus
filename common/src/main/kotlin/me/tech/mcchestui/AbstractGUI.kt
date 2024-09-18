@@ -236,6 +236,16 @@ abstract class AbstractGUI<I : GUIItem, C : Any>(
     }
 }
 
+enum class EventResult {
+    ACCEPTED,
+    CANCELLED,
+    ;
+
+    /** Whether the event was cancelled or not. */
+    val isCancelled: Boolean
+        get() = this == CANCELLED
+}
+
 // we just dont care about the type of gui provided to re-render.
 /** GUI Render function. */
 typealias GUIRender = AbstractGUI<*, *>.() -> Unit

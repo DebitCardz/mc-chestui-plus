@@ -45,7 +45,7 @@ internal class GUIItemPickupListener(gui: MinestomGUI) : GUIListener(gui) {
 
         gui.onPickupItem?.let { dispatcher ->
             dispatcher(this, player, itemStack, slot).let {
-                cancelled -> isCancelled = cancelled
+                cancelled -> isCancelled = cancelled.isCancelled
             }
         }
     }
@@ -68,7 +68,7 @@ internal class GUIPlayerInventoryPickupListener(gui: MinestomGUI) : GUIListener(
 
         gui.onPlayerInventoryPickupItem?.let { dispatcher ->
             dispatcher(this, player, itemStack, slot).let {
-                cancelled -> isCancelled = cancelled
+                cancelled -> isCancelled = cancelled.isCancelled
             }
         }
     }

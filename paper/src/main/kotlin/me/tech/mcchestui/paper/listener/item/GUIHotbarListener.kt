@@ -52,7 +52,7 @@ internal class GUIHotbarListener(gui: PaperGUI) : GUIEventListener(gui) {
 
         gui.onPlaceItem?.let { dispatcher ->
             dispatcher(ev, ev.whoClicked as Player, itemStack, ev.slot).let { cancelled ->
-                ev.isCancelled = cancelled
+                ev.isCancelled = cancelled.isCancelled
             }
         }
     }
@@ -97,7 +97,7 @@ internal class GUIHotbarListener(gui: PaperGUI) : GUIEventListener(gui) {
 
         gui.onPickupItem?.let { dispatcher ->
             dispatcher(ev, ev.whoClicked as Player, itemStack, ev.slot).let { cancelled ->
-                ev.isCancelled = cancelled
+                ev.isCancelled = cancelled.isCancelled
             }
         }
     }
