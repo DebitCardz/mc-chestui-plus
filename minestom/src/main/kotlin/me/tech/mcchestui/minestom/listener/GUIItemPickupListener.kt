@@ -6,10 +6,12 @@ import me.tech.mcchestui.minestom.event.MinestomGUISlotClickEvent
 import me.tech.mcchestui.minestom.isPlayerInventory
 import net.minestom.server.event.EventListener
 import net.minestom.server.event.inventory.InventoryPreClickEvent
+import net.minestom.server.item.ItemStack
 
 internal class GUIItemPickupListener(gui: MinestomGUI) : GUIListener(gui) {
     override fun listener() = EventListener.builder(InventoryPreClickEvent::class.java)
         .filter { it.inventory == gui.inventory.minestomInventory }
+        .ignoreCancelled(true)
         .handler { it.guiItemPickup() }
         .build()
 
@@ -33,6 +35,11 @@ internal class GUIItemPickupListener(gui: MinestomGUI) : GUIListener(gui) {
 
         val itemStack = clickedItem
         if(itemStack.isAir) {
+            return
+        }
+
+        if(!gui.allowItemPickup) {
+            isCancelled = true
             return
         }
 

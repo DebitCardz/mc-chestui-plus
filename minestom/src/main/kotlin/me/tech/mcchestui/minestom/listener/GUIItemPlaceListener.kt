@@ -9,14 +9,25 @@ import net.minestom.server.inventory.click.ClickType
 internal class GUIItemPlaceListener(gui: MinestomGUI) : GUIListener(gui) {
     override fun listener() = EventListener.builder(InventoryPreClickEvent::class.java)
         .filter { it.player.openInventory === gui.inventory.minestomInventory }
+        .ignoreCancelled(true)
         .handler { it.guiItemPlace() }
         .build()
 
     private fun InventoryPreClickEvent.guiItemPlace() {
         if(
-            clickType == ClickType.SHIFT_CLICK
+            !inventory.isPlayerInventory()
+            && clickType.name.endsWith("DRAGGING", true)
+            && !gui.allowItemDrag
+        ) {
+            isCancelled = true
+            return
+        }
+
+        if(
+            clickType == ClickType.START_SHIFT_CLICK
             && inventory.isPlayerInventory()
         ) {
+
             if(!gui.allowItemPlacement || !gui.allowShiftClick) {
                 isCancelled = true
                 return
