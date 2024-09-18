@@ -13,9 +13,6 @@ interface GUIItem {
     /** The lore of the item. */
     var lore: Collection<Component>?
 
-    /** The amount of the item. */
-    var amount: Int
-
     /** The custom model data attached to the item. */
     var customModelData: Int?
 

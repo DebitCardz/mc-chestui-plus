@@ -47,7 +47,7 @@ subprojects {
         publications {
             register<MavenPublication>("maven") {
                 groupId = "${project.group}"
-                artifactId = "mc-chestui-plus-${project.name}"
+                artifactId = project.name
                 version = "${project.version}"
 
                 from(components["java"])

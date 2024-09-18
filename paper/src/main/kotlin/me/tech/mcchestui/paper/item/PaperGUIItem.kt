@@ -55,9 +55,6 @@ class PaperGUIItem(
         get() = type
         set(value) { type = value }
 
-    /** Current [ItemStack] size. */
-    override var amount: Int = 1
-
     /**
      * Whether the [ItemStack] is glowing.
      */

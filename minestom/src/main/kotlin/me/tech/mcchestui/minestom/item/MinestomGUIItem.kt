@@ -44,7 +44,8 @@ class MinestomGUIItem(
         get() = stack.material()
         set(value) { stack = stack.withMaterial(value) }
 
-    override var amount: Int
+    /** Amount of the [stack]. */
+    var amount: Int
         get() = stack.amount()
         set(value) { stack = stack.withAmount(value) }
 
