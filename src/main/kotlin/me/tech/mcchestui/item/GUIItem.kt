@@ -147,10 +147,10 @@ open class GUIItem constructor(
 		set(value) {
 			itemStack.editMeta {
 				if(value) {
-					it.addEnchant(Enchantment.ARROW_INFINITE, 0, true)
+					it.addEnchant(Enchantment.INFINITY, 0, true)
 					it.addItemFlags(ItemFlag.HIDE_ENCHANTS)
 				} else {
-					it.removeEnchant(Enchantment.ARROW_INFINITE)
+					it.removeEnchant(Enchantment.INFINITY)
 					it.removeItemFlags(ItemFlag.HIDE_ENCHANTS)
 				}
 			}
